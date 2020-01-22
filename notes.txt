@@ -1,0 +1,4 @@
+Having problems with data types - 
+    Trying to append vectors onto vectors, the outside vector needs to be a vector of type 
+    vector<int> or even more layers of that - not sure how to work past this. Look into what
+    others have done.
