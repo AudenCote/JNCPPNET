@@ -8,58 +8,54 @@ public:
     int dims;
     std::vector<int>& shape;
     int *memPtr;
+    int num_vals = 1;
 
     Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
         memPtr = CreateArray(dims, shape);
+        for(int val : params) { num_vals *= val; }
         Zero();
     }    
 
     int *CreateArray(int N, std::vector<int>& D) {
-        //  Calculate size needed.
+
         int s = sizeof(int);
+
         for (int n = 0; n < N; ++n)
             s *= D[n];
 
-        //  Allocate space.
         return (int*) malloc(s);
     }
 
     void Zero(){
-        std::vector<int> input_shape;
 
-        // for(int d = 0; d < dims; ++d){
-        for(int v = 0; v < shape[0]; ++v){
+        std::cout << num_vals << std::endl;
 
-            for(int od = 0; od < dims; ++od){
-                if(od != 0)
-                    for(int ov = 0; ov < shape[od]; ++ov){
-                        std::cout << v << ' ';
-                        std::cout << ov << std::endl; 
-                    }
-            }
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] = i;
 
-        }
-        std::cout << std::endl;
-        // }
-
-        std::cout << "done" << std::endl;
     }
 
-    int GetElement(int I[]){
+    int GetElement(int I[]) throw(std::string) {
+
         if(dims == 0)
             return *memPtr;
         
         int idx = I[0];
-        for(size_t d = 1; d < dims; ++d)
-            idx = idx * shape[d] + I[d];
+        for(int d = 1; d < dims; ++d)
+            idx = idx * shape[d] + (I[d]);
+
+        if(idx > num_vals)
+            throw "That index is not valid";
+
 
         return *(&memPtr[idx]);
     }
 
     void SetElement(int I[], int val){
+
         int idx = I[0];
-        for(size_t d = 1; d < dims; ++d)
-            idx = idx * shape[d] + I[d];
+        for(int d = 1; d < dims; ++d)
+            idx = idx * shape[d] + (I[d]);
 
         *(&memPtr[idx]) = val;
     }
@@ -71,10 +67,8 @@ int main() {
 
     Matrix mat(params);
 
-    int idx_list[2] = {0, 0};
-    mat.SetElement(idx_list, 1);
-    // std::cout << mat.GetElement(idx_list);
-
+    int get_idx[3] = {1, 1, 2};
+    std::cout << mat.GetElement(get_idx) << std::endl;
 
     return 0;
 }

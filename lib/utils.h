@@ -8,9 +8,3 @@ std::vector<int> get_sec(std::vector<int>& v, int start, int end){
     return vn;
 }
 
-void print_vec(std::vector<int> const input){
-    for(int i = 0; i < input.size(); ++i){
-        std::cout << input[i] << ' ';
-    }
-    std::cout << std::endl;
-}
