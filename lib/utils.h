@@ -1,10 +1,15 @@
-std::vector<int> get_sec(std::vector<int>& v, int start, int end){
-    std::vector<int> vn((end-start)+1);
+#include <iostream>
 
-    for(int i = 0; i < (end-start)+1; ++i){
-        vn[i] = v[i + start];
-    }
 
-    return vn;
+int plus(int a, int b) {
+	return a + b;
 }
-
+int minus(int a, int b) {
+	return a - b;
+}
+int times(int a, int b) {
+	return a * b;
+}
+float dividedby(float a, float b) {
+	return a / b;
+}

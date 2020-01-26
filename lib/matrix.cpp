@@ -4,17 +4,8 @@
 
 
 class Matrix {
-public:
-    int dims;
-    std::vector<int>& shape;
+private:
     int *memPtr;
-    int num_vals = 1;
-
-    Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
-        memPtr = CreateArray(dims, shape);
-        for(int val : params) { num_vals *= val; }
-        Zero();
-    }    
 
     int *CreateArray(int N, std::vector<int>& D) {
 
@@ -26,49 +17,203 @@ public:
         return (int*) malloc(s);
     }
 
-    void Zero(){
+    static Matrix *ElementwiseOperation(Matrix& mat1, Matrix& mat2, int (*func)(int)) {
 
-        std::cout << num_vals << std::endl;
+        try{
+            if(mat1.num_vals != mat2.num_vals)
+                throw std::invalid_argument("Matrix dimensions do not match")
+        }
+        catch(const std::invalid_argument& e) {
+            std::cout << std::endl << e << " in function ElementwiseAddition" << std::endl;
+        }
 
+        Matrix outmat(mat1.shape)
+
+        for (int i = 0; i < outmat.num_vals; i++)
+            outmat.memPtr[i] = func(mat1.memPtr[i], mat2.memPtr[i]);
+
+        return &outmat
+    }
+    
+public:
+    int dims;
+    std::vector<int>& shape;
+    int num_vals = 1;
+
+    Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
+        memPtr = CreateArray(dims, shape);
+        for(int val : params) { num_vals *= val; }
+        Zero();
+    }    
+
+    void Zero() {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] = i;
-
+            memPtr[i] = 0;
     }
 
-    int GetElement(int I[]) throw(std::string) {
+    int GetElement(int I[]) {
+        try{
+            if(dims == 0)
+                return *memPtr;
 
-        if(dims == 0)
-            return *memPtr;
-        
-        int idx = I[0];
-        for(int d = 1; d < dims; ++d)
-            idx = idx * shape[d] + (I[d]);
+            for(int d : dims)
+                if(I[d] >= shape[d] || I[d] < 0)
+                    throw std::invalid_argument("Invalid Indexing");
+            
+            int idx = I[0];
+            for(int d = 1; d < dims; ++d)
+                idx = idx * shape[d] + (I[d]);
 
-        if(idx > num_vals)
-            throw "That index is not valid";
+            if(idx > num_vals)
+                throw std::invalid_argument("Invalid Indexing");
 
 
-        return *(&memPtr[idx]);
+            return memPtr[idx];
+        }
+        catch(const std::invalid_argument& e) {
+            std::cout << std::endl << e << " in function GetElement" << std::endl;
+        }
     }
 
-    void SetElement(int I[], int val){
+    void SetElement(int I[], int val) {
+        try{
+            for(int d : dims)
+                if(I[d] >= shape[d] || I[d] < 0)
+                    throw std::invalid_argument("Invalid Indexing");
 
-        int idx = I[0];
-        for(int d = 1; d < dims; ++d)
-            idx = idx * shape[d] + (I[d]);
+            int idx = I[0];
+            for(int d = 1; d < dims; ++d)
+                idx = idx * shape[d] + (I[d]);
 
-        *(&memPtr[idx]) = val;
+            if(idx > num_vals)
+                throw std::invalid_argument("Invalid Indexing");
+
+            memPtr[idx] = val;
+        }
+        catch(const std::invalid_argument& e) {
+            std::cout << std::endl << e << " in function SetElement" << std::endl;
+        }
     }
+
+    void Add(val) {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] += val;
+    }
+
+    void Subtract(val) {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] -= val;
+    }
+
+    void Multiply(val) {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] *= val;
+    }
+
+    void Divide(val) {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] /= val;
+    }
+
+    static Matrix *DotProduct(Matrix& mat1, Matrix& mat2) {
+
+        try{
+            if(mat1.dims != 2 || mat2.dims != 2)
+                throw std::invalid_argument("Invalid matrix dimensions");
+        }
+        catch(const std::invalid_argument& e) {
+            std::cout << std::endl << e << " in function DotProduct" << std::endl;
+        }
+
+        std::vector<std::vector<int>> m1vec, m2vec, outvec;
+        std::vector<int> outshape, lstemp1, lstemp2;
+
+        for (int i = 0; i < mat1.num_vals; i++)
+            lstemp1.pushback(mat1.memPtr[i]);
+        for (int i = 0; i < mat2.num_vals; i++)
+            lstemp2.pushback(mat2.memPtr[i]);
+
+        for(int d = 0; d < 2; ++d) {
+            m1vec = {}
+            for(int j = 0; j < mat1.num_vals; ++j) {
+                if(j % mat1.shape[d] == 0) {
+                    for(int i = j; i < mat1.shape[d]; ++i) {
+                        m1vec.push_back(lstemp1[j]);
+                    }
+                }
+            }
+            lstemp1 = m1vec;
+            m2vec = {}
+            for(int j = 0; j < mat2.num_vals; ++j) {
+                if(j % mat2.shape[d] == 0) {
+                    for(int i = j; i < mat2.shape[d]; ++i) {
+                        m2vec.push_back(lstemp1);
+                    }
+                }
+            }
+            lstemp2 = m2vec;
+        }
+
+        std::vector<int> temprow;
+        int total = 0;
+
+        for(int i = 0; i < m1vec.size(); ++1) {
+            temprow = {};
+            for(int j = 0; j < m2vec[0].size(); ++j) {
+                total = 0;
+                for(int k = 0; k < m2vec.size(); ++k) {
+                    total = total + m1vec[i][k] + m2vec[k][j]
+                }
+                temprow.pushback(total)
+            }
+            outvec.push_back(temprow)
+        }
+
+
+        Matrix outmat({outvec.size(), outvec[0].size()});
+        return &outmat
+    }
+
+    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+        return ElementwiseOperation(mat1, mat2, plus)
+    }
+    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+        return ElementwiseOperation(mat1, mat2, minus)
+    }
+    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+        return ElementwiseOperation(mat1, mat2, times)
+    }
+    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+        return ElementwiseOperation(mat1, mat2, dividedby)
+    }
+
+    float Sum() {
+        float sum = 0;
+        for (int i = 0; i < num_vals; i++)
+            sum += memPtr[i];
+        return sum
+    }
+
+    void Map(func) {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] = func(memPtr[i]);
+    }
+
+
+
 };
+
+
+
 
 int main() {
 
     std::vector<int> params = {2, 2, 2};
 
-    Matrix mat(params);
+    Matrix mat1(params);
 
     int get_idx[3] = {1, 1, 2};
-    std::cout << mat.GetElement(get_idx) << std::endl;
+    std::cout << mat1.GetElement(get_idx) << std::endl;
 
     return 0;
 }
