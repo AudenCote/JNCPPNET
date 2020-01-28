@@ -8,7 +8,6 @@ private:
     int *memPtr;
 
     int *CreateArray(int N, std::vector<int>& D) {
-
         int s = sizeof(int);
 
         for (int n = 0; n < N; ++n)
@@ -24,15 +23,15 @@ private:
                 throw std::invalid_argument("Matrix dimensions do not match");
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e << " in function ElementwiseAddition" << std::endl;
+            std::cout << std::endl << e.what() << " in function ElementwiseAddition" << std::endl << std::endl;
         }
 
-        Matrix outmat(mat1.shape);
+        Matrix *outmat = new Matrix(mat1.shape);
 
-        for (int i = 0; i < outmat.num_vals; ++i)
-            outmat.memPtr[i] = func(mat1.memPtr[i], mat2.memPtr[i]);
+        for (int i = 0; i < outmat->num_vals; ++i)
+            outmat->memPtr[i] = func(mat1.memPtr[i], mat2.memPtr[i]);
 
-        return &outmat;
+        return outmat;
     }
     
 public:
@@ -40,10 +39,13 @@ public:
     std::vector<int>& shape;
     int num_vals = 1;
 
-    Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
+    Matrix (std::vector<int> params) : dims(params.size()), shape(params) { 
         memPtr = CreateArray(dims, shape);
         for(int val : params) { num_vals *= val; }
         Zero();
+
+        
+
     }    
 
     void Zero() {
@@ -51,7 +53,11 @@ public:
             memPtr[i] = 0;
     }
 
-    int GetElement(int I[]) {
+    int GetElement(std::initializer_list<int> init_list) {
+
+        int I[init_list.size()];
+        std::copy(init_list.begin(), init_list.end(), I);
+
         try{
             if(dims == 0)
                 return *memPtr;
@@ -71,11 +77,15 @@ public:
             return memPtr[idx];
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e << " in function GetElement" << std::endl;
+            std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
         }
     }
 
-    void SetElement(int I[], int val) {
+    void SetElement(std::initializer_list<int> init_list, int val) {
+
+        int I[init_list.size()];
+        std::copy(init_list.begin(), init_list.end(), I);
+
         try{
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
@@ -91,7 +101,7 @@ public:
             memPtr[idx] = val;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e << " in function SetElement" << std::endl;
+            std::cout << std::endl << e.what() << " in function SetElement" << std::endl << std::endl;
         }
     }
 
@@ -120,72 +130,42 @@ public:
         try{
             if(mat1.dims != 2 || mat2.dims != 2)
                 throw std::invalid_argument("Invalid matrix dimensions");
+            if(mat1.shape[1] != mat2.shape[0])
+                throw std::invalid_argument("Matrix dimensions don't match: Invalid matrix dimensions");
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e << " in function DotProduct" << std::endl;
+            std::cout << std::endl << e.what() << " in function DotProduct" << std::endl << std::endl;
         }
 
-        std::vector<std::vector<int>> m1vec, m2vec, outvec;
-        std::vector<int> outshape, lstemp1, lstemp2;
+        int row1 = mat1.shape[0],  col1 = mat1.shape[1], row2 = mat2.shape[0], col2 = mat2.shape[1];
+        int size = row1*col2;
 
-        for (int i = 0; i < mat1.num_vals; i++)
-            lstemp1.push_back(mat1.memPtr[i]);
-        for (int i = 0; i < mat2.num_vals; i++)
-            lstemp2.push_back(mat2.memPtr[i]);
+        std::vector<int> out_shape = {row1, col2};
+        Matrix *out = new Matrix({row1, col2});
 
-        for(int d = 0; d < 2; ++d) {
-            m1vec = {};
-            for(int j = 0; j < mat1.num_vals; ++j) {
-                if(j % mat1.shape[d] == 0) {
-                    for(int i = j; i < mat1.shape[d]; ++i) {
-                        m1vec.push_back(lstemp1[j]);
-                    }
-                }
+        for (int i = 0; i < row1; i++) {
+            for (int j = 0; j < col2; j++) {
+                int total = 0;
+                for (int k = 0; k < col1; k++)
+                    total = total + mat1.memPtr[i * col1 + k] * mat2.memPtr[k * col2 + j];
+                out->memPtr[i*col2+j] = total;
             }
-            lstemp1 = m1vec;
-            
-
-            m2vec = {};
-            for(int j = 0; j < mat2.num_vals; ++j) {
-                if(j % mat2.shape[d] == 0) {
-                    for(int i = j; i < mat2.shape[d]; ++i) {
-                        m2vec.push_back(lstemp1);
-                    }
-                }
-            }
-            lstemp2 = m2vec;
         }
 
-        std::vector<int> temprow;
-        int total = 0;
+        return out;
 
-        for(int i = 0; i < m1vec.size(); ++i) {
-            temprow = {};
-            for(int j = 0; j < m2vec[0].size(); ++j) {
-                total = 0;
-                for(int k = 0; k < m2vec.size(); ++k) {
-                    total = total + m1vec[i][k] + m2vec[k][j];
-                }
-                temprow.push_back(total);
-            }
-            outvec.push_back(temprow);
-        }
-
-        outshape = {outvec.size(), outvec[0].size()};
-        Matrix outmat(outshape);
-        return &outmat;
     }
 
-    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+    static Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
         return ElementwiseOperation(mat1, mat2, plus);
     }
-    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+    static Matrix *ElementwiseSubtraction(Matrix& mat1, Matrix& mat2) {
         return ElementwiseOperation(mat1, mat2, minus);
     }
-    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+    static Matrix *ElementwiseMultiplication(Matrix& mat1, Matrix& mat2) {
         return ElementwiseOperation(mat1, mat2, times);
     }
-    Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+    static Matrix *ElementwiseDivision(Matrix& mat1, Matrix& mat2) {
         //return ElementwiseOperation(mat1, mat2, dividedby); //sort out float/int issue
     }
 
@@ -201,21 +181,17 @@ public:
             memPtr[i] = func(memPtr[i]);
     }
 
-
-
 };
 
 
 
 
 int main() {
+    std::vector<int> shape = {2, 2, 2};
+    Matrix mat1(shape);
 
-    std::vector<int> params = {2, 2, 2};
-
-    Matrix mat1(params);
-
-    int get_idx[3] = {1, 1, 2};
-    std::cout << mat1.GetElement(get_idx) << std::endl;
+    for(int val : mat1.shape)
+        std::cout << val << std::endl;
 
     return 0;
 }
