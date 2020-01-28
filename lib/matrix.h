@@ -189,15 +189,3 @@ public:
     }
 
 };
-
-
-
-
-int main() {
-    std::vector<int> shape = {2, 2, 2};
-    Matrix mat1(shape);
-
-    std::cout << mat1.GetElement({0, 0, 0}) << std::endl;
-
-    return 0;
-}
