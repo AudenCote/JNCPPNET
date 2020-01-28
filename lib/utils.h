@@ -1,13 +1,12 @@
 #include <iostream>
 
-
-int plus(int a, int b) {
+float plus(float a,float b) {
 	return a + b;
 }
-int minus(int a, int b) {
+float minus(float a,float b) {
 	return a - b;
 }
-int times(int a, int b) {
+float times(float a,float b) {
 	return a * b;
 }
 float dividedby(float a, float b) {

@@ -1,14 +1,14 @@
 #include <iostream>
 #include <vector>
 #include "utils.h"
+#include <random>
 
 
 class Matrix {
 private:
-    int *memPtr;
 
     int *CreateArray(int N, std::vector<int>& D) {
-        int s = sizeof(int);
+        int s = sizeof(float);
 
         for (int n = 0; n < N; ++n)
             s *= D[n];
@@ -16,7 +16,7 @@ private:
         return (int*) malloc(s);
     }
 
-    static Matrix *ElementwiseOperation(Matrix& mat1, Matrix& mat2, int (*func)(int, int)) {
+    static Matrix *ElementwiseOperation(Matrix& mat1, Matrix& mat2, float (*func)(float, float)) {
 
         try{
             if(mat1.num_vals != mat2.num_vals)
@@ -38,22 +38,28 @@ public:
     int dims;
     std::vector<int>& shape;
     int num_vals = 1;
+    int *memPtr;
 
-    Matrix (std::vector<int> params) : dims(params.size()), shape(params) { 
+    Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
         memPtr = CreateArray(dims, shape);
         for(int val : params) { num_vals *= val; }
         Zero();
-
-        
-
     }    
 
     void Zero() {
         for (int i = 0; i < num_vals; ++i)
-            memPtr[i] = 0;
+            memPtr[i] = 0.0f;
     }
 
-    int GetElement(std::initializer_list<int> init_list) {
+    void Randomize() {
+        std::default_random_engine generator;
+        std::uniform_real_distribution<float> distribution(-1, 1);
+
+        for (int i = 0; i < num_vals; ++i)
+            memPtr[i] = distribution(generator);
+    }
+
+    float GetElement(std::initializer_list<int> init_list) {
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -78,10 +84,11 @@ public:
         }
         catch(const std::invalid_argument& e) {
             std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
+            return 0;
         }
     }
 
-    void SetElement(std::initializer_list<int> init_list, int val) {
+    void SetElement(std::initializer_list<int> init_list, float val) {
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -105,22 +112,22 @@ public:
         }
     }
 
-    void Add(int val) {
+    void Add(float val) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] += val;
     }
 
-    void Subtract(int val) {
+    void Subtract(float val) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] -= val;
     }
 
-    void Multiply(int val) {
+    void Multiply(float val) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] *= val;
     }
 
-    void Divide(int val) {
+    void Divide(float val) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] /= val;
     }
@@ -141,7 +148,7 @@ public:
         int size = row1*col2;
 
         std::vector<int> out_shape = {row1, col2};
-        Matrix *out = new Matrix({row1, col2});
+        Matrix *out = new Matrix(out_shape);
 
         for (int i = 0; i < row1; i++) {
             for (int j = 0; j < col2; j++) {
@@ -176,7 +183,7 @@ public:
         return sum;
     }
 
-    void Map(int (*func)(int)) {
+    void Map(float (*func)(float)) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] = func(memPtr[i]);
     }
@@ -190,8 +197,7 @@ int main() {
     std::vector<int> shape = {2, 2, 2};
     Matrix mat1(shape);
 
-    for(int val : mat1.shape)
-        std::cout << val << std::endl;
+    std::cout << mat1.GetElement({0, 0, 0}) << std::endl;
 
     return 0;
 }
