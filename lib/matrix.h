@@ -2,12 +2,13 @@
 #include <vector>
 #include "utils.h"
 #include <random>
+#include <math.h>
 
 
 class Matrix {
 private:
 
-    int *CreateArray(int N, std::vector<int>& D) {
+    int *create_array(int N, std::vector<int>& D) {
         int s = sizeof(float);
 
         for (int n = 0; n < N; ++n)
@@ -16,7 +17,7 @@ private:
         return (int*) malloc(s);
     }
 
-    static Matrix *ElementwiseOperation(Matrix& mat1, Matrix& mat2, float (*func)(float, float)) {
+    static Matrix *elementwise_operation(Matrix& mat1, Matrix& mat2, float (*func)(float, float)) {
 
         try{
             if(mat1.num_vals != mat2.num_vals)
@@ -33,6 +34,10 @@ private:
 
         return outmat;
     }
+
+    float sigmoid_operator(float x) {
+        return 1/(1+exp(-(x)));
+    }
     
 public:
     int dims;
@@ -41,7 +46,7 @@ public:
     int *memPtr;
 
     Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
-        memPtr = CreateArray(dims, shape);
+        memPtr = create_array(dims, shape);
         for(int val : params) { num_vals *= val; }
         Zero();
     }    
@@ -59,7 +64,7 @@ public:
             memPtr[i] = distribution(generator);
     }
 
-    float GetElement(std::initializer_list<int> init_list) {
+    float GetVal(std::initializer_list<int> init_list) {
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -71,16 +76,16 @@ public:
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
                     throw std::invalid_argument("Invalid Indexing");
-            
+            if(std::sizeof(I) != dims)
+                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetChunk function instead of GetVal --");
+
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
                 idx = idx * shape[d] + (I[d]);
-
             if(idx > num_vals)
                 throw std::invalid_argument("Invalid Indexing");
-
-
             return memPtr[idx];
+
         }
         catch(const std::invalid_argument& e) {
             std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
@@ -88,7 +93,53 @@ public:
         }
     }
 
-    void SetElement(std::initializer_list<int> init_list, float val) {
+    Matrix *GetChunk(std::initializer_list<int> init_list) {
+
+        int I[init_list.size()];
+        std::copy(init_list.begin(), init_list.end(), I);
+
+        try{
+            if(dims == 0)
+                return *memPtr;
+
+            for(int d = 0; d < dims; ++d)
+                if(I[d] >= shape[d] || I[d] < 0)
+                    throw std::invalid_argument("Invalid Indexing");
+
+            if(std::sizeof(I) >= dims)
+                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetVal function instead of GetChunk --");
+
+
+            int start_idx = 0;
+            int denomenator = 1;
+            for(int i = 0; i < std::sizeof(I); ++i){
+                denomenator *= shape[i];
+                start_idx += I[i]*shape[i];
+            }
+
+            //ADD PROTECTION FOR SEGMENTATION FAULTS
+
+            //make sure start_idx is the right start point - plus or minus one?
+            std::vector<float> out_mat_vals;
+            for(int i = start_idx; i < num_vals/denomenator; ++i)
+                out_mat_vals.push_back(memPtr[i]);
+
+            std::vector<int> out_mat_shape;
+            Matrix out_mat = new Matrix(out_mat_shape);
+            for(int v = 0; v < out_mat.num_vals; ++v)
+                out_mat.memPtr[v] = out_mat_vals[v];
+
+            return &out_mat;
+
+        }
+        catch(const std::invalid_argument& e) {
+            std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
+            return NULL;
+        }
+
+    }
+
+    void Set(std::initializer_list<int> init_list, float val) {
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -132,6 +183,11 @@ public:
             memPtr[i] /= val;
     }
 
+    void Square() {
+        for (int i = 0; i < num_vals; i++)
+            memPtr[i] = memPtr[i]*memPtr[i];
+    }
+
     static Matrix *DotProduct(Matrix& mat1, Matrix& mat2) {
 
         try{
@@ -164,16 +220,16 @@ public:
     }
 
     static Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
-        return ElementwiseOperation(mat1, mat2, plus);
+        return elementwise_operation(mat1, mat2, plus);
     }
     static Matrix *ElementwiseSubtraction(Matrix& mat1, Matrix& mat2) {
-        return ElementwiseOperation(mat1, mat2, minus);
+        return elementwise_operation(mat1, mat2, minus);
     }
     static Matrix *ElementwiseMultiplication(Matrix& mat1, Matrix& mat2) {
-        return ElementwiseOperation(mat1, mat2, times);
+        return elementwise_operation(mat1, mat2, times);
     }
     static Matrix *ElementwiseDivision(Matrix& mat1, Matrix& mat2) {
-        //return ElementwiseOperation(mat1, mat2, dividedby); //sort out float/int issue
+        return elementwise_operation(mat1, mat2, dividedby); 
     }
 
     float Sum() {
@@ -186,6 +242,10 @@ public:
     void Map(float (*func)(float)) {
         for (int i = 0; i < num_vals; i++)
             memPtr[i] = func(memPtr[i]);
+    }
+
+    static void Sigmoid(Matrix* mat) {
+        mat->Map(sigmoid_operator);
     }
 
 };
