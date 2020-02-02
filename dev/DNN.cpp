@@ -6,7 +6,7 @@ class NeuralNetwork {
 private:
 	float learning_rate = .1f;
 
-	float MeanSquareError(Matrix targets, Matrix output) { 
+	float mean_square_error(Matrix targets, Matrix output) { 
 		Matrix *error = Matrix::ElementwiseSubtraction(targets, output);
 		error->Square();
 		float sum = error->Sum();
@@ -60,19 +60,19 @@ public:
 		Matrux& bias_h = biases[0];
 		Matrix& bias_o = biases[biases.size() - 1];
 
-		Matrix *hidden1 = DotProduct(weights_ih, input_array);
-		hidden1 = ElementwiseAddition(*hidden1, bias_h);
-		Matrix::Sigmoid(hidden1);
+		Matrix* new_hidden = Matrix::DotProduct(weights_ih, input_array);
+		new_hidden = Matrix::ElementwiseAddition(*hidden1, bias_h);
+		Matrix::Sigmoid(new_hidden);
 
-		std::vector<Matrix*> hiddens= {hidden1};
-		for(int i = 0; i < hidden_layers; ++i)
-			Matrix *new_hidden = DotProduct(weights[i + 1], hiddens[hiddens.size() - 1]);
-			new_hidden = ElementwiseAddition(*new_hidden, biases[i + 1]);
+		std::vector<Matrix*> hiddens= {new_hidden};
+		for(int i = 0; i < hidden_layers - 1; ++i)
+			new_hidden = Matrix::DotProduct(weights[i + 1], hiddens[hiddens.size() - 1]);
+			new_hidden = Matrix::ElementwiseAddition(*new_hidden, biases[i + 1]);
 			Matrix::Sigmoid(new_hidden);
 			hiddens.push_back(new_hidden);
 
-		Matrix *outputs = DotProduct(weights_ho, hiddens[hiddens.size() - 1]);
-		outputs = ElementwiseAddition(*outputs, bias_o);
+		Matrix *outputs = Matrix::DotProduct(weights_ho, hiddens[hiddens.size() - 1]);
+		outputs = Matrix::ElementwiseAddition(*outputs, bias_o);
 		Matrix::Sigmoid(outputs);
 
 		return outputs;
@@ -81,8 +81,7 @@ public:
 	void feed_and_propogate(Matrix& input_array, Matrix& target_array, int epochs, int batch_size) {
 		std::vector<int> input_shape = {input_array.shape[0], 2, 1}; Matrix input_all(input_shape);
 		for(int i = 0; i < input_all.shape[0]; ++i)
-			if(i % 2 == 0)
-				input_all.memPtr[i] = input_array.memPtr[i]; input_all.memPtr[i + 1] = target_array.memPtr[i]
+			if(i % 2 == 0) input_all.memPtr[i] = input_array.memPtr[i]; input_all.memPtr[i + 1] = target_array.memPtr[i]
 
 		std::vector<int> batches_shape = {ciel(input_all.shape[0]/batch_size), batch_size, 2, 1}; Matrix batches(batches_shape);
 		for(int i = 0; i < input_all.shape[0]; ++i){
@@ -91,6 +90,49 @@ public:
 					for(int k = 0; k < 2; ++k)
 						batches.Set({ciel(i/batch_size), j, k, 0}, input_all.memPtr[i + j + k]);
 				}
+		}
+
+		std::vector<float> losses;
+		for(int e = 0; e < epochs; ++e){
+
+			for(int b = 0; b < batches.num_vals; ++b){
+
+				Matrix* batch = batches.GetChunk[b];
+
+				for(int p = 0; p < batch.num_vals; ++p){
+
+					Matrix* it_pair = batch.GetChunk[p]
+					Matrix* inputs = it_pair.GetChunk[0]; Matrix* targets = it_pair.GetChunk[1];
+
+					Matrix* new_hidden = Matrix::DotProduct(weights[0], inputs);
+					new_hidden = Matrix::ElementwiseAddition(hidden1, biases[0]);
+					Matrix::Sigmoid(new_hidden);
+
+					std::vector<Matrix*> hiddens= {new_hidden};
+					for(int i = 0; i < hidden_layers - 1; ++i)
+						Matrix *new_hidden = Matrix::DotProduct(weights[i + 1], hiddens[hiddens.size() - 1]);
+						new_hidden = Matrix::ElementwiseAddition(*new_hidden, biases[i + 1]);
+						Matrix::Sigmoid(new_hidden);
+						hiddens.push_back(new_hidden);
+
+					Matrix *outputs = Matrix::DotProduct(weights_ho, hiddens[hiddens.size() - 1]);
+					outputs = Matrix::ElementwiseAddition(*outputs, bias_o);
+					Matrix::Sigmoid(outputs);
+
+					//GRADIENT DESCENT STARTS HERE
+
+					float loss = NeuralNetwork::mean_square_error(targets, outputs);
+					Matrix* last_errors = Matrix::ElementwiseSubtraction(targets, outputs);
+					Matrix::SigmoidPrime(outputs);
+					Matrix* gradients = ElementwiseMultiplication(outputs, last_errors);
+					gradients.multiply(learning_rate);
+
+
+
+				}
+				
+			}
+
 		}
 
 		
