@@ -1,5 +1,6 @@
 #include "../lib/matrix.h"
 #include <string>
+#include <vector>
 
 
 class NeuralNetwork {
@@ -60,9 +61,11 @@ public:
 		Matrux& bias_h = biases[0];
 		Matrix& bias_o = biases[biases.size() - 1];
 
-		Matrix* new_hidden = Matrix::DotProduct(weights_ih, input_array);
-		new_hidden = Matrix::ElementwiseAddition(*hidden1, bias_h);
-		Matrix::Sigmoid(new_hidden);
+		Matrix* hidden1 = Matrix::DotProduct(weights_ih, input_array);
+		hidden1 = Matrix::ElementwiseAddition(*hidden1, bias_h);
+		Matrix::Sigmoid(hidden1);
+		Matrix* new_hidden = hidden1;
+
 
 		std::vector<Matrix*> hiddens= {new_hidden};
 		for(int i = 0; i < hidden_layers - 1; ++i)
@@ -99,6 +102,9 @@ public:
 
 				Matrix* batch = batches.GetChunk[b];
 
+				std::vector<std::vector<Matrix*>> bias_deltas;
+				std::vector<std::vector<Matrix*>> weights_deltas;
+
 				for(int p = 0; p < batch.num_vals; ++p){
 
 					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
@@ -106,9 +112,10 @@ public:
 					Matrix* it_pair = batch.GetChunk[p]
 					Matrix* inputs = it_pair.GetChunk[0]; Matrix* targets = it_pair.GetChunk[1];
 
-					Matrix* new_hidden = Matrix::DotProduct(weights[0], inputs);
-					new_hidden = Matrix::ElementwiseAddition(hidden1, biases[0]);
-					Matrix::Sigmoid(new_hidden);
+					Matrix* hidden1 = Matrix::DotProduct(weights[0], inputs);
+					hidden1 = Matrix::ElementwiseAddition(hidden1, biases[0]);
+					Matrix::Sigmoid(hidden1);
+					Matrix* new_hidden = hidden1;
 
 					std::vector<Matrix*> hiddens= {new_hidden};
 					for(int i = 0; i < hidden_layers - 1; ++i)
@@ -126,7 +133,7 @@ public:
 					float loss = NeuralNetwork::mean_square_error(targets, outputs);
 					Matrix* last_errors = Matrix::ElementwiseSubtraction(targets, outputs);
 					Matrix::SigmoidPrime(outputs);
-					Matrix* gradients = ElementwiseMultiplication(outputs, last_errors);
+					Matrix* gradients = Matrix::ElementwiseMultiplication(outputs, last_errors);
 					gradients.Multiply(learning_rate);
 
 					Matrix* hidden3_t = Matrix::Transpose(hiddens[hiddens.size() - 1]);
@@ -136,22 +143,37 @@ public:
 					sample_bias_deltas.push_back(gradients);
 
 					for(int i = 0; i < hidden_layers; ++i){
-
 						Matrix current& = weights[-(i+1)];
 						Matrix new_hidden = *hiddens[-(i+2)];
 
 						Matrix* current_transposed = Matrix::Transpose(&current);
 						Matrix* last_errors = Matrix::DotProduct(current_transposed, last_errors);
 						Matrix::SigmoidPrime(hiddens[-(i+1)]);
-						Matrix* gradients = ElementwiseMultiplication(hiddens[-(i+1)], last_errors);
+						Matrix* gradients = Matrix::ElementwiseMultiplication(hiddens[-(i+1)], last_errors);
 						gradients.Multiply(learning_rate);
 
-						
+						Matrix* new_hidden_transposed = Matrix::Transpose(new_hidden);
+						deltas = Matrix::DotProduct(gradients, new_hidden_transposed);
 
-
-
+						sample_weights_deltas.push_back(deltas);
+						sample_bias_deltas.push_back(gradients);
 					}
 
+					Matrix* weights1_t = Matrix::Transpose(weights[1]);
+					Matrix* hidden1_errors = Matrix::DotProduct(weights1_t, last_errors); //last_errors probably isn't defined correctly anymore. fix that.
+
+					Matrix::SigmoidPrime(hidden1);
+					hidden1_gradient = Matrix::ElementwiseMultiplication(hidden1, hidden1_errors);
+					hidden1_gradient.Multiply(learning_rate);
+
+					Matrix* inputs_t = Matrix::Transpose(inputs);
+					Matrix* weights_ih_deltas = Matrix::DotProduct(hidden1_gradient, inputs_t);
+
+					sample_weights_deltas.push_back(weight_ih_deltas);
+					sample_bias_deltas.push_back(hidden1_gradient);
+
+					weights_deltas.push_back(sample_weights_deltas);
+					bias_deltas.push_back(sample_bias_deltas);
 
 				}
 				
@@ -167,8 +189,11 @@ public:
 
 
 int main() {
+
 	return 0;
+
 }
+
 
 
 
