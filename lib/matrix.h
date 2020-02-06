@@ -38,6 +38,10 @@ private:
     float sigmoid_operator(float x) {
         return 1/(1+exp(-(x)));
     }
+
+    float sigmoid_prime_operator(float x) {
+         return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))))
+    }
     
 public:
     int dims;
@@ -248,4 +252,25 @@ public:
         mat->Map(sigmoid_operator);
     }
 
+    static void SigmoidPrime(Matrix* mat) {
+        mat->Map(sigmoid_prime_operator);
+    }
+
+    static Matrix *Transpose(Matrix* mat) {
+        if(mat.dims == 2){
+            Matrix* out_mat = new Matrix(mat.shape[1], mat.shape[0])
+            for(int i = 0; i < mat->num_vals; ++i){
+                if(i % mat->shape[0] == 0){
+                    for(int j = 0; j < mat->shape[0]; ++j){
+                        out_mat->Set({j, i/mat->shape[0]}, mat->GetVal({i/mat->shape[0], j}));
+                    }
+                }
+                
+            }
+            return out_mat;
+        }else {
+            std::cout << "Cannot transpose matrix of invalid dimensions" << std::endl;
+            return mat;
+        }
+    }
 };

@@ -101,6 +101,8 @@ public:
 
 				for(int p = 0; p < batch.num_vals; ++p){
 
+					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
+
 					Matrix* it_pair = batch.GetChunk[p]
 					Matrix* inputs = it_pair.GetChunk[0]; Matrix* targets = it_pair.GetChunk[1];
 
@@ -125,8 +127,30 @@ public:
 					Matrix* last_errors = Matrix::ElementwiseSubtraction(targets, outputs);
 					Matrix::SigmoidPrime(outputs);
 					Matrix* gradients = ElementwiseMultiplication(outputs, last_errors);
-					gradients.multiply(learning_rate);
+					gradients.Multiply(learning_rate);
 
+					Matrix* hidden3_t = Matrix::Transpose(hiddens[hiddens.size() - 1]);
+					weights_ho_deltas = Matrix::DotProduct(*gradient, *hidden3_t);
+
+					sample_weights_deltas.push_back(weights_ho_deltas);
+					sample_bias_deltas.push_back(gradients);
+
+					for(int i = 0; i < hidden_layers; ++i){
+
+						Matrix current& = weights[-(i+1)];
+						Matrix new_hidden = *hiddens[-(i+2)];
+
+						Matrix* current_transposed = Matrix::Transpose(&current);
+						Matrix* last_errors = Matrix::DotProduct(current_transposed, last_errors);
+						Matrix::SigmoidPrime(hiddens[-(i+1)]);
+						Matrix* gradients = ElementwiseMultiplication(hiddens[-(i+1)], last_errors);
+						gradients.Multiply(learning_rate);
+
+						
+
+
+
+					}
 
 
 				}
@@ -135,10 +159,7 @@ public:
 
 		}
 
-		
-
-
-
+	
 
 	}
 
