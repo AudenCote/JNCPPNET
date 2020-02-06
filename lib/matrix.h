@@ -40,7 +40,7 @@ private:
     }
 
     float sigmoid_prime_operator(float x) {
-         return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))))
+         return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))));
     }
     
 public:
@@ -104,13 +104,13 @@ public:
 
         try{
             if(dims == 0)
-                return *memPtr;
+                return nullptr;
 
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
                     throw std::invalid_argument("Invalid Indexing");
 
-            if(std::sizeof(I) >= dims)
+            if(sizeof(I) >= dims)
                 throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetVal function instead of GetChunk --");
 
 
@@ -257,8 +257,8 @@ public:
     }
 
     static Matrix *Transpose(Matrix* mat) {
-        if(mat.dims == 2){
-            Matrix* out_mat = new Matrix(mat.shape[1], mat.shape[0])
+        if(mat->dims == 2){
+            Matrix* out_mat = new Matrix(mat->shape[1], mat->shape[0])
             for(int i = 0; i < mat->num_vals; ++i){
                 if(i % mat->shape[0] == 0){
                     for(int j = 0; j < mat->shape[0]; ++j){
