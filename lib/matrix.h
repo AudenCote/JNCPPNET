@@ -35,11 +35,11 @@ private:
         return outmat;
     }
 
-    float sigmoid_operator(float x) {
+    static float sigmoid_operator(float x) {
         return 1/(1+exp(-(x)));
     }
 
-    float sigmoid_prime_operator(float x) {
+    static float sigmoid_prime_operator(float x) {
          return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))));
     }
     
@@ -80,7 +80,7 @@ public:
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
                     throw std::invalid_argument("Invalid Indexing");
-            if(std::sizeof(I) != dims)
+            if(sizeof(I) != dims)
                 throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetChunk function instead of GetVal --");
 
             int idx = I[0];
@@ -116,7 +116,7 @@ public:
 
             int start_idx = 0;
             int denomenator = 1;
-            for(int i = 0; i < std::sizeof(I); ++i){
+            for(int i = 0; i <sizeof(I); ++i){
                 denomenator *= shape[i];
                 start_idx += I[i]*shape[i];
             }
@@ -129,11 +129,11 @@ public:
                 out_mat_vals.push_back(memPtr[i]);
 
             std::vector<int> out_mat_shape;
-            Matrix out_mat = new Matrix(out_mat_shape);
-            for(int v = 0; v < out_mat.num_vals; ++v)
-                out_mat.memPtr[v] = out_mat_vals[v];
+            Matrix* out_mat = new Matrix(out_mat_shape);
+            for(int v = 0; v < out_mat->num_vals; ++v)
+                out_mat->memPtr[v] = out_mat_vals[v];
 
-            return &out_mat;
+            return out_mat;
 
         }
         catch(const std::invalid_argument& e) {
@@ -208,7 +208,7 @@ public:
         int size = row1*col2;
 
         std::vector<int> out_shape = {row1, col2};
-        Matrix *out = new Matrix(out_shape);
+        Matrix* out = new Matrix(out_shape);
 
         for (int i = 0; i < row1; i++) {
             for (int j = 0; j < col2; j++) {
@@ -258,7 +258,7 @@ public:
 
     static Matrix *Transpose(Matrix* mat) {
         if(mat->dims == 2){
-            Matrix* out_mat = new Matrix(mat->shape[1], mat->shape[0])
+            std::vector<int> out_mat_shape = {mat->shape[1], mat->shape[0]}; Matrix* out_mat = new Matrix(out_mat_shape);
             for(int i = 0; i < mat->num_vals; ++i){
                 if(i % mat->shape[0] == 0){
                     for(int j = 0; j < mat->shape[0]; ++j){
