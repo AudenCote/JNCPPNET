@@ -1,0 +1,7 @@
+
+SOLVED{The values of the matrices in the weights vector of the neural network are changed as soon as initialize_parameters function ends
+	OR shape not being saved correctly}
+
+figure out deallocating shape vars in matrix class
+
+storing weights/bias data like pickling in python

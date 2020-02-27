@@ -15,6 +15,13 @@ private:
 		return sum/targets.num_vals;
 	}
 
+	void deallocate_wb(){
+		std::cout << "In function" << std::endl;
+
+		for(Matrix* w : weights){ delete w; }
+		for(Matrix* b : biases){ delete b; }
+	}
+
 public:
 	int input_nodes;
 	int output_nodes;
@@ -26,23 +33,33 @@ public:
 	NeuralNetwork(int in_nodes, int out_nodes, float rate) 
 		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { }
 
+	~NeuralNetwork() {
+		std::cout << "Deallocating" << std::endl;
+		deallocate_wb();
+	}
+
 	void HiddenLayer(int hidden_nodes) {
 		hidden_layers++;
 		hidden_nodes_array.push_back(hidden_nodes);
 	}
 
 	void InitializeParameters() {
+
 		std::vector<int> w_shape = {hidden_nodes_array[0], input_nodes};
 		std::vector<int> b_shape = {hidden_nodes_array[0], 1};
 		weights.push_back(new Matrix(w_shape));
-		weights.push_back(new Matrix(b_shape));
+		biases.push_back(new Matrix(b_shape));
 
-		for(int i = 0; i < hidden_layers; ++i) {
-			w_shape = {hidden_nodes_array[i + 1], hidden_nodes_array[i]};
-			b_shape = {hidden_nodes_array[i + 1], 1};
-			weights.push_back(new Matrix(w_shape));
-			biases.push_back(new Matrix(b_shape));
+		if(hidden_nodes_array.size() > 1){
+			std::cout << "Yes" << std::endl;
+			for(int i = 0; i < hidden_layers; ++i) {
+				w_shape = {hidden_nodes_array[i + 1], hidden_nodes_array[i]};
+				b_shape = {hidden_nodes_array[i + 1], 1};
+				weights.push_back(new Matrix(w_shape));
+				biases.push_back(new Matrix(b_shape));
+			}
 		}
+
 		w_shape = {output_nodes, hidden_nodes_array[hidden_nodes_array.size() - 1]};
 		b_shape = {output_nodes, 1};
 		weights.push_back(new Matrix(w_shape));
@@ -52,11 +69,6 @@ public:
 			w_mat->Randomize();
 		for(Matrix* b_mat : biases)
 			b_mat->Randomize();
-	}
-
-	void Deallocate(){
-		for(Matrix* w : weights){ delete w; }
-		for(Matrix* b : biases){ delete b; }
 	}
 
 	Matrix *Predict(Matrix& input_array) {
@@ -70,7 +82,6 @@ public:
 		hidden1 = Matrix::ElementwiseAddition(*hidden1, *bias_h);
 		Matrix::Sigmoid(hidden1);
 		Matrix*& new_hidden = hidden1;
-
 
 		std::vector<Matrix*> hiddens= {new_hidden};
 		for(int i = 0; i < hidden_layers - 1; ++i){
@@ -88,18 +99,30 @@ public:
 	}
 
 	void feed_and_propogate(Matrix& input_array, Matrix& target_array, int epochs, int batch_size) {
+
+		//ALMOST ALL ISSUES IN BELOW CODE CHUNK
+
 		std::vector<int> input_shape = {input_array.shape[0], 2, 1}; Matrix input_all(input_shape);
 		for(int i = 0; i < input_all.shape[0]; ++i){
 			if(i % 2 == 0) input_all.memPtr[i] = input_array.memPtr[i]; input_all.memPtr[i + 1] = target_array.memPtr[i];
 		}
+
+
 		std::vector<int> batches_shape = {(int)ceil(input_all.shape[0]/batch_size), batch_size, 2, 1}; Matrix batches(batches_shape);
 		for(int i = 0; i < input_all.shape[0]; ++i){
 			if(i % batch_size == 0)
 				for(int j = i; j < batch_size + i; ++j){
-					for(int k = 0; k < 2; ++k)
+					for(int k = 0; k < 2; ++k){
+						std::cout << "CP-1" << std::endl;
 						batches.Set({(int)ceil(i/batch_size), j, k, 0}, input_all.memPtr[i + j + k]);
+					}
 				}
 		}
+
+
+
+		std::cout << "CP0" << std::endl; 
+
 		std::vector<float> losses;
 		for(int e = 0; e < epochs; ++e){
 

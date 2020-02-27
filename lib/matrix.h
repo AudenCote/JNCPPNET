@@ -45,7 +45,8 @@ private:
     
 public:
     int dims;
-    std::vector<int>& shape;
+    std::vector<int>* shape_ptr = new std::vector<int>;
+    std::vector<int> shape = *shape_ptr; //Do this better
     int num_vals = 1;
     int *memPtr;
 
@@ -54,6 +55,10 @@ public:
         for(int val : params) { num_vals *= val; }
         Zero();
     }    
+
+    ~Matrix() {
+        delete shape_ptr;
+    }
 
     void Zero() {
         for (int i = 0; i < num_vals; ++i)
@@ -151,19 +156,20 @@ public:
         try{
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
-                    throw std::invalid_argument("Invalid Indexing");
+                    std::cout << "d: " << d << std::endl;
+                    //throw std::invalid_argument("Invalid Indexing Code 0");
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
                 idx = idx * shape[d] + (I[d]);
 
             if(idx > num_vals)
-                throw std::invalid_argument("Invalid Indexing");
+                throw std::invalid_argument("Invalid Indexing Code 1");
 
             memPtr[idx] = val;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function SetElement" << std::endl << std::endl;
+            std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
         }
     }
 

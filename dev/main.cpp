@@ -6,13 +6,12 @@ int main() {
     NN.HiddenLayer(3);
     NN.InitializeParameters();
 
-    std::vector<int> data_shape = {3, 1}; Matrix data = Matrix(data_shape);
+    std::vector<int> data_shape = {16, 2, 1}; Matrix data = Matrix(data_shape); data.Randomize();
+    std::vector<int> tar_shape = {16, 2, 1}; Matrix tar = Matrix(data_shape); tar.Randomize();
+
+    NN.feed_and_propogate(data, tar, 1, 8);
 
     NN.Predict(data);
 
-    NN.Deallocate();
-
-
-    std::cout << "Returning" << std::endl;
     return 0;
 }
