@@ -100,44 +100,46 @@ public:
 
 	void feed_and_propogate(Matrix& input_array, Matrix& target_array, int epochs, int batch_size) {
 
-		//ALMOST ALL ISSUES IN BELOW CODE CHUNK
+		if(input_array.shape[0] != target_array.shape[0])
+			std::cout << "Different Sample Lengths" << std::endl;
 
-		std::vector<int> input_shape = {input_array.shape[0], 2, 1}; Matrix input_all(input_shape);
-		for(int i = 0; i < input_all.shape[0]; ++i){
-			if(i % 2 == 0) input_all.memPtr[i] = input_array.memPtr[i]; input_all.memPtr[i + 1] = target_array.memPtr[i];
+		std::vector<int> input_batches_shape = {(int)ceil(input_array.shape[0]/batch_size), batch_size, input_nodes, 1}; Matrix input_batches(input_batches_shape);
+		for(int i = 0; i < input_array.shape[0]; ++i){
+			if(i % batch_size == 0){
+				for(int j = i; j < batch_size + i; ++j){
+					input_batches.Set({(int)ceil(i/batch_size), j, 0}, (float)input_array.memPtr[i + j]);
+				}
+			}
 		}
-
-
-		std::vector<int> batches_shape = {(int)ceil(input_all.shape[0]/batch_size), batch_size, 2, 1}; Matrix batches(batches_shape);
-		for(int i = 0; i < input_all.shape[0]; ++i){
+		
+		std::vector<int> target_batches_shape = {(int)ceil(target_array.shape[0]/batch_size), batch_size, output_nodes, 1}; Matrix target_batches(target_batches_shape);
+		for(int i = 0; i < target_array.shape[0]; ++i){
 			if(i % batch_size == 0)
 				for(int j = i; j < batch_size + i; ++j){
-					for(int k = 0; k < 2; ++k){
-						std::cout << "CP-1" << std::endl;
-						batches.Set({(int)ceil(i/batch_size), j, k, 0}, input_all.memPtr[i + j + k]);
-					}
+					input_batches.Set({(int)ceil(i/batch_size), j, 0}, (float)target_array.memPtr[i + j]);
 				}
 		}
 
 
-
-		std::cout << "CP0" << std::endl; 
-
 		std::vector<float> losses;
 		for(int e = 0; e < epochs; ++e){
 
-			for(int b = 0; b < batches.num_vals; ++b){
-				Matrix* batch = batches.GetChunk({b});
+			for(int b = 0; b < input_batches.shape[0]; ++b){
+				Matrix* input_batch = input_batches.GetChunk({b});
+				Matrix* target_batch = target_batches.GetChunk({b});
 
 				std::vector<std::vector<Matrix*>> bias_deltas;
 				std::vector<std::vector<Matrix*>> weights_deltas;
 
-				for(int p = 0; p < batch->num_vals; ++p){
+				std::vector<Matrix*> sample_weights_shape;
+				std::vector<Matrix*> sample_bias_shape;
+
+				for(int p = 0; p < batch_size; ++p){
 
 					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
 
-					Matrix* it_pair = batch->GetChunk({p});
-					Matrix* inputs = it_pair->GetChunk({0}); Matrix* targets = it_pair->GetChunk({1});
+					Matrix* inputs = input_batch->GetChunk({p});
+					Matrix* targets = target_batch->GetChunk({p});
 
 					Matrix* hidden1 = Matrix::DotProduct(*weights[0], *inputs);
 					hidden1 = Matrix::ElementwiseAddition(*hidden1, *biases[0]);
@@ -181,7 +183,7 @@ public:
 						gradients->Multiply(learning_rate);
 
 						Matrix* new_hidden_transposed = Matrix::Transpose(&new_hidden);
-						Matrix* deltas = Matrix::DotProduct(*gradients, *new_hidden_transposed);
+						Matrix* deltas = Matrsample_sizeix::DotProduct(*gradients, *new_hidden_transposed);
 
 						sample_weights_deltas.push_back(deltas);
 						sample_bias_deltas.push_back(gradients);
@@ -204,13 +206,21 @@ public:
 
 					weights_deltas.push_back(sample_weights_deltas);
 					bias_deltas.push_back(sample_bias_deltas);
+
+					sample_weights_shape = sample_weights_deltas;
+					sample_bias_shape = sample_sample_deltas;
+
 					for(Matrix* h : hiddens) { delete h; }
 					delete inputs; delete targets; delete outputs;
 				}
-				Matrix* summed_weights_deltas = new Matrix(batch->shape);
-				Matrix* summed_bias_deltas = new Matrix(batch->shape);
+
+				//THINGS BREAK HERE, SEE BOARD
+
+				std::vector<Matrix*> summed_weights_deltas = sample_weights_shape;
+				std::vector<Matrix*> summed_bias_deltas = sample_bias_shape;
+
 				for(int s = 0; s < weights_deltas.size(); ++s) {
-					for(int i = 0; i < summed_weights_deltas->shape[0]; ++i){
+					for(int i = 0; i < batch_size; ++i){
 						summed_weights_deltas = Matrix::ElementwiseAddition(*summed_weights_deltas->GetChunk({i}), *weights_deltas[s][i]);
 					}
 				}

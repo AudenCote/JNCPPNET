@@ -156,8 +156,8 @@ public:
         try{
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
-                    std::cout << "d: " << d << std::endl;
-                    //throw std::invalid_argument("Invalid Indexing Code 0");
+                    std::cout << I[d] << " " << shape[d] << std::endl;
+                    throw std::invalid_argument("Invalid Indexing Code 0");
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
@@ -169,7 +169,7 @@ public:
             memPtr[idx] = val;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
+            //std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
         }
     }
 
