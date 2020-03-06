@@ -219,18 +219,27 @@ public:
 				std::vector<Matrix*> summed_weights_deltas = sample_weights_shape;
 				std::vector<Matrix*> summed_bias_deltas = sample_bias_shape;
 
-				for(int s = 0; s < weights_deltas.size(); ++s) {
-					for(int i = 0; i < batch_size; ++i){
-						summed_weights_deltas = Matrix::ElementwiseAddition(*summed_weights_deltas->GetChunk({i}), *weights_deltas[s][i]);
+				for(int i = 0; i < summed_weights_deltas.size(); ++i){
+					summed_weights_deltas[i]->Zero(); summed_bias_deltas[i]->Zero();
+				}
+
+									//this was weights_deltas.size()
+				for(int s = 0; s < batch_size; ++s) {
+					for(int l = 0; l < summed_weights_deltas.size(); ++l){
+						summed_weights_deltas[l] = Matrix::ElementwiseAddition(*summed_weights_deltas[l], *weights_deltas[s][l])
 					}
 				}
-				for(int s = 0; s < bias_deltas.size(); ++s) {
-					for(int i = 0; i < summed_weights_deltas->shape[0]; ++i){
-						summed_bias_deltas = Matrix::ElementwiseAddition(*summed_bias_deltas->GetChunk({i}), *bias_deltas[s][i]);
+									//this was bias_deltas.size()
+				for(int s = 0; s < batch_size; ++s) {
+					for(int l = 0; l < summed_weights_deltas.size(); ++l){
+						summed_bias_deltas[i] = Matrix::ElementwiseAddition(*summed_bias_deltas[i], *bias_deltas[s][i]);
 					}
 				}
-				summed_weights_deltas->Divide(batch_size);
-				summed_bias_deltas->Divide(batch_size);
+
+				for(int l = 0; l < summed_weights_deltas.size(); ++l){
+					summed_weights_deltas[l]->Divide(batch_size);
+					summed_bias_deltas[l]->Divide(batch_size);
+				}
 
 				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas->GetChunk({0}));
 				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas->GetChunk({0}));
