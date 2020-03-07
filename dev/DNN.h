@@ -133,10 +133,9 @@ public:
 				std::vector<std::vector<Matrix*>> bias_deltas;
 				std::vector<std::vector<Matrix*>> weights_deltas;
 
-				std::vector<Matrix*> sample_weights_shape;
-				std::vector<Matrix*> sample_bias_shape;
-
 				for(int p = 0; p < batch_size; ++p){
+
+					std::cout << "Batch: " << p << std::endl;
 
 					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
 
@@ -212,27 +211,31 @@ public:
 					weights_deltas.push_back(sample_weights_deltas);
 					bias_deltas.push_back(sample_bias_deltas);
 
-					sample_weights_shape = sample_weights_deltas;
-					sample_bias_shape = sample_bias_deltas;
-
 					for(Matrix* h : hiddens) { delete h; }
 					delete inputs; delete targets; delete outputs;
 
-					std::cout << '0' << std::endl;
+					//std::cout << "-1" << std::endl;
 				}
 
-				//THINGS BREAK HERE, SEE BOARD
+				std::cout << '0' << std::endl;
 
-				std::vector<Matrix*> summed_weights_deltas = sample_weights_shape;
-				std::vector<Matrix*> summed_bias_deltas = sample_bias_shape;
+				std::vector<Matrix*> summed_weights_deltas;
+				// for(Matrix* w : weights){
+				// 	summed_weights_deltas.push_back(w);
+				// }
+				std::vector<Matrix*> summed_bias_deltas;
+				// for(Matrix* b : biases){
+				// 	summed_bias_deltas.push_back(b);
+				// }
 
-				std::cout << sample_weights_shape[0]->shape[0] << std::endl;
+				std::cout << '1' << std::endl;
+
+				std::cout << weights.size() << std::endl;
 
 				for(int i = 0; i < summed_weights_deltas.size(); ++i){
 					summed_weights_deltas[i]->Zero(); summed_bias_deltas[i]->Zero();
 				}
 
-				std::cout << '1' << std::endl;
 
 									//this was weights_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {

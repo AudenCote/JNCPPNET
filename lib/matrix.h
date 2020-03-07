@@ -139,12 +139,15 @@ public:
 
             std::vector<int> out_mat_shape = {}; 
             for(int i = init_list.size(); i < shape.size(); ++i){
+                std::cout << "Shape -- " << i << ": " << shape[i] << std::endl;
                 out_mat_shape.push_back(shape[i]);
             }
             
             Matrix* out_mat = new Matrix(out_mat_shape);
+            std::cout << "num_vals: " << out_mat_vals.size() << std::endl;
             for(int v = 0; v < out_mat->num_vals; ++v)
                 out_mat->memPtr[v] = out_mat_vals[v];
+
 
             return out_mat;
         }
