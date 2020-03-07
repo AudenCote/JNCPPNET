@@ -97,34 +97,40 @@ public:
 
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
+            std::cout << std::endl << e.what() << " in function GetVal" << std::endl << std::endl;
             return 0;
         }
     }
 
     Matrix *GetChunk(std::initializer_list<int> init_list) {
 
+        std::cout << '0' << std::endl;
+
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
-
+        
         try{
             if(dims == 0)
                 return nullptr;
 
-            for(int d = 0; d < dims; ++d)
-                if(I[d] >= shape[d] || I[d] < 0)
+            for(int d = 0; d < init_list.size(); ++d){
+                if(I[d] >= shape[d] || I[d] < 0){
                     throw std::invalid_argument("Invalid Indexing");
+                }
+            }
 
-            if(sizeof(I) >= dims)
+            if(init_list.size() >= dims){
                 throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetVal function instead of GetChunk --");
-
+            }
 
             int start_idx = 0;
             int denomenator = 1;
-            for(int i = 0; i <sizeof(I); ++i){
+            for(int i = 0; i < init_list.size(); ++i){
                 denomenator *= shape[i];
                 start_idx += I[i]*shape[i];
             }
+
+            //BELOW IS THE CURRENT BUG: GETTING A SEGMENTATION FAULT IN THE SECOND LOOP
 
             //ADD PROTECTION FOR SEGMENTATION FAULTS
 
@@ -133,16 +139,17 @@ public:
             for(int i = start_idx; i < num_vals/denomenator; ++i)
                 out_mat_vals.push_back(memPtr[i]);
 
-            std::vector<int> out_mat_shape;
+            std::vector<int> out_mat_shape = {}; //THIS NEEDS TO EXIST
             Matrix* out_mat = new Matrix(out_mat_shape);
             for(int v = 0; v < out_mat->num_vals; ++v)
                 out_mat->memPtr[v] = out_mat_vals[v];
 
-            return out_mat;
+            std::cout << '1' << std::endl;            
 
+            return out_mat;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function GetElement" << std::endl << std::endl;
+            std::cout << std::endl << e.what() << " in function GetChunk" << std::endl << std::endl;
             return NULL;
         }
 
@@ -156,8 +163,8 @@ public:
         try{
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
-                    std::cout << I[d] << " " << shape[d] << std::endl;
-                    throw std::invalid_argument("Invalid Indexing Code 0");
+                    //std::cout << d << " " << I[d] << " " << shape[d] << std::endl;
+                    throw std::invalid_argument("Invalid Indexing Code 0"); 
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
@@ -169,7 +176,7 @@ public:
             memPtr[idx] = val;
         }
         catch(const std::invalid_argument& e) {
-            //std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
+            std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
         }
     }
 

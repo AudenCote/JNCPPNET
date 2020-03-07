@@ -16,8 +16,6 @@ private:
 	}
 
 	void deallocate_wb(){
-		std::cout << "In function" << std::endl;
-
 		for(Matrix* w : weights){ delete w; }
 		for(Matrix* b : biases){ delete b; }
 	}
@@ -106,8 +104,10 @@ public:
 		std::vector<int> input_batches_shape = {(int)ceil(input_array.shape[0]/batch_size), batch_size, input_nodes, 1}; Matrix input_batches(input_batches_shape);
 		for(int i = 0; i < input_array.shape[0]; ++i){
 			if(i % batch_size == 0){
-				for(int j = i; j < batch_size + i; ++j){
-					input_batches.Set({(int)ceil(i/batch_size), j, 0}, (float)input_array.memPtr[i + j]);
+				for(int j = 0; j < batch_size; ++j){
+					for(int k = 0; k < input_nodes; ++k){
+						input_batches.Set({(int)ceil(i/batch_size), j, k, 0}, (float)input_array.memPtr[i + (j*input_nodes) + k]);
+					}
 				}
 			}
 		}
@@ -115,16 +115,20 @@ public:
 		std::vector<int> target_batches_shape = {(int)ceil(target_array.shape[0]/batch_size), batch_size, output_nodes, 1}; Matrix target_batches(target_batches_shape);
 		for(int i = 0; i < target_array.shape[0]; ++i){
 			if(i % batch_size == 0)
-				for(int j = i; j < batch_size + i; ++j){
-					input_batches.Set({(int)ceil(i/batch_size), j, 0}, (float)target_array.memPtr[i + j]);
+				for(int j = 0; j < batch_size; ++j){
+					for(int k = 0; k < output_nodes; ++k){
+						input_batches.Set({(int)ceil(i/batch_size), j, k, 0}, (float)target_array.memPtr[i + (j*output_nodes) + k]);
+					}
 				}
 		}
-
 
 		std::vector<float> losses;
 		for(int e = 0; e < epochs; ++e){
 
 			for(int b = 0; b < input_batches.shape[0]; ++b){
+
+				std::cout << '0' << std::endl;
+
 				Matrix* input_batch = input_batches.GetChunk({b});
 				Matrix* target_batch = target_batches.GetChunk({b});
 
@@ -183,7 +187,7 @@ public:
 						gradients->Multiply(learning_rate);
 
 						Matrix* new_hidden_transposed = Matrix::Transpose(&new_hidden);
-						Matrix* deltas = Matrsample_sizeix::DotProduct(*gradients, *new_hidden_transposed);
+						Matrix* deltas = Matrix::DotProduct(*gradients, *new_hidden_transposed);
 
 						sample_weights_deltas.push_back(deltas);
 						sample_bias_deltas.push_back(gradients);
@@ -208,7 +212,7 @@ public:
 					bias_deltas.push_back(sample_bias_deltas);
 
 					sample_weights_shape = sample_weights_deltas;
-					sample_bias_shape = sample_sample_deltas;
+					sample_bias_shape = sample_bias_deltas;
 
 					for(Matrix* h : hiddens) { delete h; }
 					delete inputs; delete targets; delete outputs;
@@ -226,13 +230,13 @@ public:
 									//this was weights_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {
 					for(int l = 0; l < summed_weights_deltas.size(); ++l){
-						summed_weights_deltas[l] = Matrix::ElementwiseAddition(*summed_weights_deltas[l], *weights_deltas[s][l])
+						summed_weights_deltas[l] = Matrix::ElementwiseAddition(*summed_weights_deltas[l], *weights_deltas[s][l]);
 					}
 				}
 									//this was bias_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {
 					for(int l = 0; l < summed_weights_deltas.size(); ++l){
-						summed_bias_deltas[i] = Matrix::ElementwiseAddition(*summed_bias_deltas[i], *bias_deltas[s][i]);
+						summed_bias_deltas[l] = Matrix::ElementwiseAddition(*summed_bias_deltas[l], *bias_deltas[s][l]);
 					}
 				}
 
@@ -241,18 +245,20 @@ public:
 					summed_bias_deltas[l]->Divide(batch_size);
 				}
 
-				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas->GetChunk({0}));
-				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas->GetChunk({0}));
+				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas[summed_weights_deltas.size()-1]);
+				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas[summed_bias_deltas.size()-1]);
 
 				for(int i = 0; i < hidden_layers; ++i){
-					weights[-(i + 2)] = Matrix::ElementwiseAddition(*weights[-(i + 2)], *summed_weights_deltas->GetChunk({i + 1}));
-					biases[-(i + 1)] = Matrix::ElementwiseAddition(*biases[-(i + 2)], *summed_bias_deltas->GetChunk({i + 1}));
+					weights[-(i + 2)] = Matrix::ElementwiseAddition(*weights[-(i + 2)], *summed_weights_deltas[i + 1]);
+					biases[-(i + 1)] = Matrix::ElementwiseAddition(*biases[-(i + 2)], *summed_bias_deltas[i + 1]);
 				}
-				weights[0] = Matrix::ElementwiseAddition(*weights[0], *summed_weights_deltas->GetChunk({summed_weights_deltas->shape[0] - 1}));
-				biases[0] = Matrix::ElementwiseAddition(*biases[0], *summed_bias_deltas->GetChunk({summed_weights_deltas->shape[0] - 1}));
+				weights[0] = Matrix::ElementwiseAddition(*weights[0], *summed_weights_deltas[0]);
+				biases[0] = Matrix::ElementwiseAddition(*biases[0], *summed_bias_deltas[0]);
 
-				delete summed_weights_deltas;
-				delete summed_bias_deltas;	
+				for(int l = 0; l < summed_weights_deltas.size(); ++l){
+					delete summed_weights_deltas[l];
+					delete summed_bias_deltas[l];
+				}
 			}
 		}
 	}
