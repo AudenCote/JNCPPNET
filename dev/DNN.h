@@ -127,8 +127,6 @@ public:
 
 			for(int b = 0; b < input_batches.shape[0]; ++b){
 
-				std::cout << '0' << std::endl;
-
 				Matrix* input_batch = input_batches.GetChunk({b});
 				Matrix* target_batch = target_batches.GetChunk({b});
 
@@ -157,6 +155,7 @@ public:
 						Matrix::Sigmoid(new_hidden);
 						hiddens.push_back(new_hidden);
 					}
+
 					Matrix *outputs = Matrix::DotProduct(*weights[weights.size() - 1], *hiddens[hiddens.size() - 1]);
 					outputs = Matrix::ElementwiseAddition(*outputs, *biases[biases.size() - 1]);
 					Matrix::Sigmoid(outputs);
@@ -176,7 +175,8 @@ public:
 					sample_bias_deltas.push_back(gradients);
 					delete gradients; delete hidden3_tr; delete weights_ho_deltas;
 
-					for(int i = 0; i < hidden_layers; ++i){
+					//SEGMENTATION FAULT IN FOLLOWING CODE CHUNK
+					for(int i = 0; i < hidden_layers-1; ++i){
 						Matrix* current = weights[-(i+1)];
 						Matrix& new_hidden = *hiddens[-(i+2)];
 
@@ -185,6 +185,7 @@ public:
 						Matrix::SigmoidPrime(hiddens[-(i+1)]);
 						Matrix* gradients = Matrix::ElementwiseMultiplication(*hiddens[-(i+1)], *last_errors);
 						gradients->Multiply(learning_rate);
+						
 
 						Matrix* new_hidden_transposed = Matrix::Transpose(&new_hidden);
 						Matrix* deltas = Matrix::DotProduct(*gradients, *new_hidden_transposed);
@@ -216,6 +217,8 @@ public:
 
 					for(Matrix* h : hiddens) { delete h; }
 					delete inputs; delete targets; delete outputs;
+
+					std::cout << '0' << std::endl;
 				}
 
 				//THINGS BREAK HERE, SEE BOARD
@@ -223,9 +226,13 @@ public:
 				std::vector<Matrix*> summed_weights_deltas = sample_weights_shape;
 				std::vector<Matrix*> summed_bias_deltas = sample_bias_shape;
 
+				std::cout << sample_weights_shape[0]->shape[0] << std::endl;
+
 				for(int i = 0; i < summed_weights_deltas.size(); ++i){
 					summed_weights_deltas[i]->Zero(); summed_bias_deltas[i]->Zero();
 				}
+
+				std::cout << '1' << std::endl;
 
 									//this was weights_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {

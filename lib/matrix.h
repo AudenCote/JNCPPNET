@@ -85,8 +85,9 @@ public:
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
                     throw std::invalid_argument("Invalid Indexing");
-            if(sizeof(I) != dims)
+            if(init_list.size() != dims){
                 throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetChunk function instead of GetVal --");
+            }
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
@@ -103,8 +104,6 @@ public:
     }
 
     Matrix *GetChunk(std::initializer_list<int> init_list) {
-
-        std::cout << '0' << std::endl;
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -130,21 +129,22 @@ public:
                 start_idx += I[i]*shape[i];
             }
 
-            //BELOW IS THE CURRENT BUG: GETTING A SEGMENTATION FAULT IN THE SECOND LOOP
-
             //ADD PROTECTION FOR SEGMENTATION FAULTS
 
             //make sure start_idx is the right start point - plus or minus one?
             std::vector<float> out_mat_vals;
-            for(int i = start_idx; i < num_vals/denomenator; ++i)
+            for(int i = start_idx; i < num_vals/denomenator; ++i){
                 out_mat_vals.push_back(memPtr[i]);
+            }
 
-            std::vector<int> out_mat_shape = {}; //THIS NEEDS TO EXIST
+            std::vector<int> out_mat_shape = {}; 
+            for(int i = init_list.size(); i < shape.size(); ++i){
+                out_mat_shape.push_back(shape[i]);
+            }
+            
             Matrix* out_mat = new Matrix(out_mat_shape);
             for(int v = 0; v < out_mat->num_vals; ++v)
                 out_mat->memPtr[v] = out_mat_vals[v];
-
-            std::cout << '1' << std::endl;            
 
             return out_mat;
         }
@@ -270,15 +270,13 @@ public:
     }
 
     static Matrix *Transpose(Matrix* mat) {
+
         if(mat->dims == 2){
             std::vector<int> out_mat_shape = {mat->shape[1], mat->shape[0]}; Matrix* out_mat = new Matrix(out_mat_shape);
-            for(int i = 0; i < mat->num_vals; ++i){
-                if(i % mat->shape[0] == 0){
-                    for(int j = 0; j < mat->shape[0]; ++j){
-                        out_mat->Set({j, i/mat->shape[0]}, mat->GetVal({i/mat->shape[0], j}));
-                    }
-                }
-                
+            for(int i = 0; i < mat->shape[0]; ++i){
+                for(int j = 0; j < mat->shape[1]; ++j){
+                    out_mat->Set({j, i}, mat->GetVal({i, j}));
+                }                
             }
             return out_mat;
         }else {
