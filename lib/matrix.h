@@ -129,7 +129,7 @@ public:
                 start_idx += I[i]*shape[i];
             }
 
-            //ADD PROTECTION FOR SEGMENTATION FAULTS
+            //ADD PROTECTION FOR SEGMENTATION FAULTS -- PROBLEM STILL BELOW, SEE BOARD
 
             //make sure start_idx is the right start point - plus or minus one?
             std::vector<float> out_mat_vals;
