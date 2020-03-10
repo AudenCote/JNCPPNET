@@ -135,14 +135,21 @@ public:
 
 				for(int p = 0; p < batch_size; ++p){
 
-					std::cout << "Batch: " << p << std::endl;
+					std::cout << "==============================" << std::endl;
+
+					std::cout << "Sample: " << p << std::endl;
 
 					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
 
 					Matrix* inputs = input_batch->GetChunk({p});
 					Matrix* targets = target_batch->GetChunk({p});
 
+					for(int d : inputs->shape){
+						std::cout << "Inputs: " << &d << std::endl;
+					}
+
 					Matrix* hidden1 = Matrix::DotProduct(*weights[0], *inputs);
+
 					hidden1 = Matrix::ElementwiseAddition(*hidden1, *biases[0]);
 					Matrix::Sigmoid(hidden1);
 					Matrix*& new_hidden = hidden1;
