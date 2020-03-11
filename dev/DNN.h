@@ -145,7 +145,7 @@ public:
 					Matrix* targets = target_batch->GetChunk({p});
 
 					for(int d : inputs->shape){
-						std::cout << "Inputs: " << &d << std::endl;
+						std::cout << "Inputs: " << d << std::endl;
 					}
 
 					Matrix* hidden1 = Matrix::DotProduct(*weights[0], *inputs);
@@ -220,11 +220,7 @@ public:
 
 					for(Matrix* h : hiddens) { delete h; }
 					delete inputs; delete targets; delete outputs;
-
-					//std::cout << "-1" << std::endl;
 				}
-
-				std::cout << '0' << std::endl;
 
 				std::vector<Matrix*> summed_weights_deltas;
 				// for(Matrix* w : weights){
@@ -234,8 +230,6 @@ public:
 				// for(Matrix* b : biases){
 				// 	summed_bias_deltas.push_back(b);
 				// }
-
-				std::cout << '1' << std::endl;
 
 				std::cout << weights.size() << std::endl;
 
@@ -262,6 +256,7 @@ public:
 					summed_bias_deltas[l]->Divide(batch_size);
 				}
 
+				//SEGMENTATION FAULT IN NEXT TWO LINES
 				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas[summed_weights_deltas.size()-1]);
 				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas[summed_bias_deltas.size()-1]);
 
@@ -276,6 +271,7 @@ public:
 					delete summed_weights_deltas[l];
 					delete summed_bias_deltas[l];
 				}
+				
 			}
 		}
 	}
