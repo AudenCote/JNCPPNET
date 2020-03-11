@@ -45,8 +45,8 @@ private:
     
 public:
     int dims;
-    std::vector<int>* shape_ptr = new std::vector<int>;
-    std::vector<int> shape = *shape_ptr; //Do this better
+    //std::vector<int>* shape_ptr = new std::vector<int>;
+    std::vector<int> shape; //Do this better
     int num_vals = 1;
     int *memPtr;
 
@@ -57,7 +57,7 @@ public:
     }    
 
     ~Matrix() {
-        delete shape_ptr;
+        //delete shape_ptr;
     }
 
     void Zero() {
@@ -123,31 +123,29 @@ public:
             }
 
             int start_idx = 0;
-            int denomenator = 1;
             for(int i = 0; i < init_list.size(); ++i){
-                denomenator *= shape[i];
-                start_idx += I[i]*shape[i];
+                int mult_dims = 1;
+                mult_dims *= I[i];
+                for(int j = i + 1; j < dims; ++j){
+                    mult_dims *= shape[j];
+                }
+                start_idx += mult_dims;
             }
 
-            //ADD PROTECTION FOR SEGMENTATION FAULTS -- PROBLEM STILL BELOW, SEE BOARD
-
-            //make sure start_idx is the right start point - plus or minus one?
             std::vector<float> out_mat_vals;
-            for(int i = start_idx; i < num_vals/denomenator; ++i){
+            for(int i = start_idx; i < num_vals; ++i){
                 out_mat_vals.push_back(memPtr[i]);
             }
 
-            std::vector<int> out_mat_shape = {}; 
-            for(int i = init_list.size(); i < shape.size(); ++i){
-                std::cout << "Shape -- " << i << ": " << shape[i] << std::endl;
+            std::vector<int> out_mat_shape;
+            for(int i = init_list.size(); i < dims; ++i){
                 out_mat_shape.push_back(shape[i]);
             }
-            
-            Matrix* out_mat = new Matrix(out_mat_shape);
-            std::cout << "num_vals: " << out_mat_vals.size() << std::endl;
-            for(int v = 0; v < out_mat->num_vals; ++v)
-                out_mat->memPtr[v] = out_mat_vals[v];
 
+            Matrix* out_mat = new Matrix(out_mat_shape);
+            for(int i = 0; i < out_mat->num_vals; ++i){
+                out_mat->memPtr[i] = out_mat_vals[i];
+            }
 
             return out_mat;
         }
