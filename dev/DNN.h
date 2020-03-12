@@ -256,9 +256,16 @@ public:
 					summed_bias_deltas[l]->Divide(batch_size);
 				}
 
+
 				//SEGMENTATION FAULT IN NEXT TWO LINES
+
+				for(int d : weights[weights.size() - 1]->shape){
+					std::cout << d << std::endl;
+				}
+
 				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas[summed_weights_deltas.size()-1]);
 				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas[summed_bias_deltas.size()-1]);
+
 
 				for(int i = 0; i < hidden_layers; ++i){
 					weights[-(i + 2)] = Matrix::ElementwiseAddition(*weights[-(i + 2)], *summed_weights_deltas[i + 1]);
