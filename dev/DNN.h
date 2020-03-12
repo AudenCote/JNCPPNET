@@ -93,6 +93,7 @@ public:
 		Matrix::Sigmoid(outputs);
 
 		for(Matrix* h : hiddens){ delete h; }
+		std::cout << "Returning Prediction" << std::endl;
 		return outputs;
 	}
 
@@ -133,20 +134,13 @@ public:
 				std::vector<std::vector<Matrix*>> bias_deltas;
 				std::vector<std::vector<Matrix*>> weights_deltas;
 
+				float loss = 0.0f;
+
 				for(int p = 0; p < batch_size; ++p){
-
-					std::cout << "==============================" << std::endl;
-
-					std::cout << "Sample: " << p << std::endl;
-
 					std::vector<Matrix*> sample_weights_deltas; std::vector<Matrix*> sample_bias_deltas;
 
 					Matrix* inputs = input_batch->GetChunk({p});
 					Matrix* targets = target_batch->GetChunk({p});
-
-					for(int d : inputs->shape){
-						std::cout << "Inputs: " << d << std::endl;
-					}
 
 					Matrix* hidden1 = Matrix::DotProduct(*weights[0], *inputs);
 
@@ -168,7 +162,7 @@ public:
 
 					//GRADIENT DESCENT STARTS HERE
 
-					float loss = NeuralNetwork::mean_square_error(*targets, *outputs);
+					loss = NeuralNetwork::mean_square_error(*targets, *outputs);
 					Matrix* last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
 					Matrix::SigmoidPrime(outputs);
 					Matrix* gradients = Matrix::ElementwiseMultiplication(*outputs, *last_errors);
@@ -179,7 +173,7 @@ public:
 
 					sample_weights_deltas.push_back(weights_ho_deltas);
 					sample_bias_deltas.push_back(gradients);
-					delete gradients; delete hidden3_tr; delete weights_ho_deltas;
+					//delete gradients; delete hidden3_tr; delete weights_ho_deltas;
 
 					//SEGMENTATION FAULT IN FOLLOWING CODE CHUNK
 					for(int i = 0; i < hidden_layers-1; ++i){
@@ -198,7 +192,7 @@ public:
 
 						sample_weights_deltas.push_back(deltas);
 						sample_bias_deltas.push_back(gradients);
-						delete current_transposed; delete gradients; delete new_hidden_transposed; delete deltas;
+						//delete current_transposed; delete gradients; delete new_hidden_transposed; delete deltas;
 					}
 
 					Matrix* weights1_tr = Matrix::Transpose(weights[1]);
@@ -213,41 +207,38 @@ public:
 
 					sample_weights_deltas.push_back(weight_ih_deltas);
 					sample_bias_deltas.push_back(hidden1_gradient);
-					delete weights1_tr; delete hidden1_errors; delete last_errors; delete hidden1_gradient; delete inputs_tr; delete weight_ih_deltas;
+					//delete weights1_tr; delete hidden1_errors; delete last_errors; delete hidden1_gradient; delete inputs_tr; delete weight_ih_deltas;
 
 					weights_deltas.push_back(sample_weights_deltas);
 					bias_deltas.push_back(sample_bias_deltas);
 
 					for(Matrix* h : hiddens) { delete h; }
-					delete inputs; delete targets; delete outputs;
+					//delete inputs; delete targets; delete outputs;
 				}
 
 				std::vector<Matrix*> summed_weights_deltas;
-				// for(Matrix* w : weights){
-				// 	summed_weights_deltas.push_back(w);
-				// }
+				for(Matrix* w : weights){
+					summed_weights_deltas.push_back(w);
+				}
 				std::vector<Matrix*> summed_bias_deltas;
-				// for(Matrix* b : biases){
-				// 	summed_bias_deltas.push_back(b);
-				// }
-
-				std::cout << weights.size() << std::endl;
+				for(Matrix* b : biases){
+				 	summed_bias_deltas.push_back(b);
+				}
 
 				for(int i = 0; i < summed_weights_deltas.size(); ++i){
 					summed_weights_deltas[i]->Zero(); summed_bias_deltas[i]->Zero();
 				}
-
-
+				
 									//this was weights_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {
 					for(int l = 0; l < summed_weights_deltas.size(); ++l){
-						summed_weights_deltas[l] = Matrix::ElementwiseAddition(*summed_weights_deltas[l], *weights_deltas[s][l]);
+						summed_weights_deltas[l] = Matrix::ElementwiseAddition(*summed_weights_deltas[l], *weights_deltas[s][weights_deltas[s].size() - 1 - l]);
 					}
 				}
 									//this was bias_deltas.size()
 				for(int s = 0; s < batch_size; ++s) {
-					for(int l = 0; l < summed_weights_deltas.size(); ++l){
-						summed_bias_deltas[l] = Matrix::ElementwiseAddition(*summed_bias_deltas[l], *bias_deltas[s][l]);
+					for(int l = 0; l < summed_bias_deltas.size(); ++l){
+						summed_bias_deltas[l] = Matrix::ElementwiseAddition(*summed_bias_deltas[l], *bias_deltas[s][bias_deltas[s].size() - 1 - l]);
 					}
 				}
 
@@ -256,27 +247,22 @@ public:
 					summed_bias_deltas[l]->Divide(batch_size);
 				}
 
-
-				//SEGMENTATION FAULT IN NEXT TWO LINES
-
-				for(int d : weights[weights.size() - 1]->shape){
-					std::cout << d << std::endl;
-				}
-
 				weights[weights.size() - 1] = Matrix::ElementwiseAddition(*weights[weights.size() - 1], *summed_weights_deltas[summed_weights_deltas.size()-1]);
 				biases[biases.size() - 1] = Matrix::ElementwiseAddition(*biases[biases.size() - 1], *summed_bias_deltas[summed_bias_deltas.size()-1]);
 
-
-				for(int i = 0; i < hidden_layers; ++i){
+				for(int i = 0; i < hidden_layers - 1; ++i){
 					weights[-(i + 2)] = Matrix::ElementwiseAddition(*weights[-(i + 2)], *summed_weights_deltas[i + 1]);
 					biases[-(i + 1)] = Matrix::ElementwiseAddition(*biases[-(i + 2)], *summed_bias_deltas[i + 1]);
 				}
+
 				weights[0] = Matrix::ElementwiseAddition(*weights[0], *summed_weights_deltas[0]);
 				biases[0] = Matrix::ElementwiseAddition(*biases[0], *summed_bias_deltas[0]);
 
+				std::cout << "Loss: " << loss << std::endl;
+
 				for(int l = 0; l < summed_weights_deltas.size(); ++l){
-					delete summed_weights_deltas[l];
-					delete summed_bias_deltas[l];
+					//delete summed_weights_deltas[l];
+					//delete summed_bias_deltas[l];
 				}
 				
 			}
