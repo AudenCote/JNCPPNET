@@ -69,8 +69,11 @@ public:
         std::default_random_engine generator;
         std::uniform_real_distribution<float> distribution(-1, 1);
 
-        for (int i = 0; i < num_vals; ++i)
+        for (int i = 0; i < num_vals; ++i){
             memPtr[i] = distribution(generator);
+            float val = memPtr[i];
+            std::cout << "Val: " << val << std::endl;
+        }
     }
 
     float GetVal(std::initializer_list<int> init_list) {
