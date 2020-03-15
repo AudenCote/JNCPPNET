@@ -75,7 +75,6 @@ public:
 		Matrix::Sigmoid(hidden1);
 		std::shared_ptr<Matrix>& new_hidden = hidden1;
 
-		//make sure declarations inside loop are ok here
 		std::vector<std::shared_ptr<Matrix>> hiddens= {hidden1};
 		for(int i = 0; i < hidden_layers - 1; ++i){
 			std::shared_ptr<Matrix> new_hidden = Matrix::DotProduct(*weights[i + 1], *hiddens[hiddens.size() - 1]);
