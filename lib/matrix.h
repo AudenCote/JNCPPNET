@@ -3,21 +3,13 @@
 #include "utils.h"
 #include <random>
 #include <math.h>
+#include <memory>
+#include <ctime>
 
 
 class Matrix {
 private:
-
-    int *create_array(int N, std::vector<int>& D) {
-        int s = sizeof(float);
-
-        for (int n = 0; n < N; ++n)
-            s *= D[n];
-
-        return (int*) malloc(s);
-    }
-
-    static Matrix *elementwise_operation(Matrix& mat1, Matrix& mat2, float (*func)(float, float)) {
+    static std::shared_ptr<Matrix> elementwise_operation(Matrix& mat1, Matrix& mat2, float (*func)(float, float)) {
 
         try{
             if(mat1.num_vals != mat2.num_vals)
@@ -27,10 +19,10 @@ private:
             std::cout << std::endl << e.what() << " in function ElementwiseAddition" << std::endl << std::endl;
         }
 
-        Matrix *outmat = new Matrix(mat1.shape);
+        std::shared_ptr<Matrix> outmat = std::make_shared<Matrix>(mat1.shape);
 
         for (int i = 0; i < outmat->num_vals; ++i)
-            outmat->memPtr[i] = func(mat1.memPtr[i], mat2.memPtr[i]);
+            outmat->matrix_values[i] = func(mat1.matrix_values[i], mat2.matrix_values[i]);
 
         return outmat;
     }
@@ -45,34 +37,25 @@ private:
     
 public:
     int dims;
-    //std::vector<int>* shape_ptr = new std::vector<int>;
     std::vector<int> shape; //Do this better
     int num_vals = 1;
-    int *memPtr;
+    std::vector<float> matrix_values;
 
     Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
-        memPtr = create_array(dims, shape);
         for(int val : params) { num_vals *= val; }
         Zero();
     }    
 
-    ~Matrix() {
-        //delete shape_ptr;
-    }
+    ~Matrix() { }
 
     void Zero() {
         for (int i = 0; i < num_vals; ++i)
-            memPtr[i] = 0.0f;
+            matrix_values.push_back(0.0f);
     }
 
     void Randomize() {
-        std::default_random_engine generator;
-        std::uniform_real_distribution<float> distribution(-1, 1);
-
         for (int i = 0; i < num_vals; ++i){
-            memPtr[i] = distribution(generator);
-            float val = memPtr[i];
-            std::cout << "Val: " << val << std::endl;
+            matrix_values[i] = gen_random_float(-1, 1);
         }
     }
 
@@ -83,7 +66,7 @@ public:
 
         try{
             if(dims == 0)
-                return *memPtr;
+                return 0;
 
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
@@ -97,7 +80,7 @@ public:
                 idx = idx * shape[d] + (I[d]);
             if(idx > num_vals)
                 throw std::invalid_argument("Invalid Indexing");
-            return memPtr[idx];
+            return matrix_values[idx];
 
         }
         catch(const std::invalid_argument& e) {
@@ -106,7 +89,7 @@ public:
         }
     }
 
-    Matrix *GetChunk(std::initializer_list<int> init_list) {
+    std::shared_ptr<Matrix> GetChunk(std::initializer_list<int> init_list) {
 
         int I[init_list.size()];
         std::copy(init_list.begin(), init_list.end(), I);
@@ -137,7 +120,7 @@ public:
 
             std::vector<float> out_mat_vals;
             for(int i = start_idx; i < num_vals; ++i){
-                out_mat_vals.push_back(memPtr[i]);
+                out_mat_vals.push_back(matrix_values[i]);
             }
 
             std::vector<int> out_mat_shape;
@@ -145,16 +128,16 @@ public:
                 out_mat_shape.push_back(shape[i]);
             }
 
-            Matrix* out_mat = new Matrix(out_mat_shape);
+            std::shared_ptr<Matrix> out_mat = std::make_shared<Matrix>(out_mat_shape);
             for(int i = 0; i < out_mat->num_vals; ++i){
-                out_mat->memPtr[i] = out_mat_vals[i];
+                out_mat->matrix_values[i] = out_mat_vals[i];
             }
 
             return out_mat;
         }
         catch(const std::invalid_argument& e) {
             std::cout << std::endl << e.what() << " in function GetChunk" << std::endl << std::endl;
-            return NULL;
+            return nullptr;
         }
 
     }
@@ -177,7 +160,7 @@ public:
             if(idx > num_vals)
                 throw std::invalid_argument("Invalid Indexing Code 1");
 
-            memPtr[idx] = val;
+            matrix_values[idx] = val;
         }
         catch(const std::invalid_argument& e) {
             std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
@@ -186,36 +169,38 @@ public:
 
     void Add(float val) {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] += val;
+            matrix_values[i] += val;
     }
 
     void Subtract(float val) {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] -= val;
+            matrix_values[i] -= val;
     }
 
     void Multiply(float val) {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] *= val;
+            matrix_values[i] *= val;
     }
 
     void Divide(float val) {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] /= val;
+            matrix_values[i] /= val;
     }
 
     void Square() {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] = memPtr[i]*memPtr[i];
+            matrix_values[i] = matrix_values[i]*matrix_values[i];
     }
 
-    static Matrix *DotProduct(Matrix& mat1, Matrix& mat2) {
+    static std::shared_ptr<Matrix> DotProduct(Matrix& mat1, Matrix& mat2) {
 
         try{
             if(mat1.dims != 2 || mat2.dims != 2)
                 throw std::invalid_argument("Invalid matrix dimensions");
-            if(mat1.shape[1] != mat2.shape[0])
+            if(mat1.shape[1] != mat2.shape[0]){
+                std::cout << mat1.shape[1] << ' ' << mat2.shape[0] << std::endl;
                 throw std::invalid_argument("Matrix dimensions don't match: Invalid matrix dimensions");
+            }
         }
         catch(const std::invalid_argument& e) {
             std::cout << std::endl << e.what() << " in function DotProduct" << std::endl << std::endl;
@@ -225,14 +210,14 @@ public:
         int size = row1*col2;
 
         std::vector<int> out_shape = {row1, col2};
-        Matrix* out = new Matrix(out_shape);
+        std::shared_ptr<Matrix> out = std::make_shared<Matrix>(out_shape);
 
         for (int i = 0; i < row1; i++) {
             for (int j = 0; j < col2; j++) {
                 int total = 0;
                 for (int k = 0; k < col1; k++)
-                    total = total + mat1.memPtr[i * col1 + k] * mat2.memPtr[k * col2 + j];
-                out->memPtr[i*col2+j] = total;
+                    total = total + mat1.matrix_values[i * col1 + k] * mat2.matrix_values[k * col2 + j];
+                out->matrix_values[i*col2+j] = total;
             }
         }
 
@@ -240,43 +225,43 @@ public:
 
     }
 
-    static Matrix *ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
+    static std::shared_ptr<Matrix> ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
         return elementwise_operation(mat1, mat2, plus);
     }
-    static Matrix *ElementwiseSubtraction(Matrix& mat1, Matrix& mat2) {
+    static std::shared_ptr<Matrix> ElementwiseSubtraction(Matrix& mat1, Matrix& mat2) {
         return elementwise_operation(mat1, mat2, minus);
     }
-    static Matrix *ElementwiseMultiplication(Matrix& mat1, Matrix& mat2) {
+    static std::shared_ptr<Matrix> ElementwiseMultiplication(Matrix& mat1, Matrix& mat2) {
         return elementwise_operation(mat1, mat2, times);
     }
-    static Matrix *ElementwiseDivision(Matrix& mat1, Matrix& mat2) {
+    static std::shared_ptr<Matrix> ElementwiseDivision(Matrix& mat1, Matrix& mat2) {
         return elementwise_operation(mat1, mat2, dividedby); 
     }
 
     float Sum() {
         float sum = 0;
         for (int i = 0; i < num_vals; i++)
-            sum += memPtr[i];
+            sum += matrix_values[i];
         return sum;
     }
 
     void Map(float (*func)(float)) {
         for (int i = 0; i < num_vals; i++)
-            memPtr[i] = func(memPtr[i]);
+            matrix_values[i] = func(matrix_values[i]);
     }
 
-    static void Sigmoid(Matrix* mat) {
+    static void Sigmoid(std::shared_ptr<Matrix> mat) {
         mat->Map(sigmoid_operator);
     }
 
-    static void SigmoidPrime(Matrix* mat) {
+    static void SigmoidPrime(std::shared_ptr<Matrix> mat) {
         mat->Map(sigmoid_prime_operator);
     }
 
-    static Matrix *Transpose(Matrix* mat) {
+    static std::shared_ptr<Matrix> Transpose(std::shared_ptr<Matrix> mat) {
 
         if(mat->dims == 2){
-            std::vector<int> out_mat_shape = {mat->shape[1], mat->shape[0]}; Matrix* out_mat = new Matrix(out_mat_shape);
+            std::vector<int> out_mat_shape = {mat->shape[1], mat->shape[0]}; std::shared_ptr<Matrix> out_mat = std::make_shared<Matrix>(out_mat_shape);
             for(int i = 0; i < mat->shape[0]; ++i){
                 for(int j = 0; j < mat->shape[1]; ++j){
                     out_mat->Set({j, i}, mat->GetVal({i, j}));
