@@ -34,23 +34,30 @@ private:
     static float sigmoid_prime_operator(float x) {
          return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))));
     }
+
+    void init_zeroes() {
+        for (int i = 0; i < num_vals; ++i){
+            matrix_values.push_back(0.0f);
+        }
+    }
     
 public:
     int dims;
-    std::vector<int> shape; //Do this better
+    std::vector<int> shape; 
     int num_vals = 1;
     std::vector<float> matrix_values;
 
     Matrix (std::vector<int>& params) : dims(params.size()), shape(params) { 
         for(int val : params) { num_vals *= val; }
-        Zero();
+        init_zeroes();
     }    
 
     ~Matrix() { }
 
-    void Zero() {
-        for (int i = 0; i < num_vals; ++i)
-            matrix_values.push_back(0.0f);
+    void Zero(){
+        for (int i = 0; i < num_vals; ++i){
+            matrix_values[i] = 0.0f;
+        }
     }
 
     void Randomize() {
@@ -198,7 +205,6 @@ public:
             if(mat1.dims != 2 || mat2.dims != 2)
                 throw std::invalid_argument("Invalid matrix dimensions");
             if(mat1.shape[1] != mat2.shape[0]){
-                std::cout << mat1.shape[1] << ' ' << mat2.shape[0] << std::endl;
                 throw std::invalid_argument("Matrix dimensions don't match: Invalid matrix dimensions");
             }
         }
@@ -206,7 +212,7 @@ public:
             std::cout << std::endl << e.what() << " in function DotProduct" << std::endl << std::endl;
         }
 
-        int row1 = mat1.shape[0],  col1 = mat1.shape[1], row2 = mat2.shape[0], col2 = mat2.shape[1];
+        int row1 = mat1.shape[0], col1 = mat1.shape[1], row2 = mat2.shape[0], col2 = mat2.shape[1];
         int size = row1*col2;
 
         std::vector<int> out_shape = {row1, col2};
@@ -214,9 +220,10 @@ public:
 
         for (int i = 0; i < row1; i++) {
             for (int j = 0; j < col2; j++) {
-                int total = 0;
-                for (int k = 0; k < col1; k++)
-                    total = total + mat1.matrix_values[i * col1 + k] * mat2.matrix_values[k * col2 + j];
+                float total = 0.0f;
+                for (int k = 0; k < col1; k++){
+                    total = total + mat2.matrix_values[k * col2 + j] * mat1.matrix_values[i * col1 + k];
+                }
                 out->matrix_values[i*col2+j] = total;
             }
         }

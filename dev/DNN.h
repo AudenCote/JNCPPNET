@@ -58,19 +58,18 @@ public:
 			w_mat->Randomize();
 		for(std::shared_ptr<Matrix> b_mat : biases)
 			b_mat->Randomize();
+
+		for(float val : weights[0]->matrix_values){
+			std::cout << val << std::endl;
+		}
 	}
 
 	std::shared_ptr<Matrix> Predict(Matrix& input_array) {
-
-		std::cout << "=====================" << std::endl;
-
-		std::shared_ptr<Matrix> weights_ih = weights[0];
 		std::shared_ptr<Matrix> weights_ho = weights[weights.size() - 1];
 		std::shared_ptr<Matrix> bias_h = biases[0];
 		std::shared_ptr<Matrix> bias_o = biases[biases.size() - 1];
 
-		//getting matrix dimensions don't match here
-		std::shared_ptr<Matrix> hidden1 = Matrix::DotProduct(*weights_ih, input_array);
+		std::shared_ptr<Matrix> hidden1 = Matrix::DotProduct(*weights[0], input_array);
 		hidden1 = Matrix::ElementwiseAddition(*hidden1, *bias_h);
 		Matrix::Sigmoid(hidden1);
 		std::shared_ptr<Matrix>& new_hidden = hidden1;
@@ -86,7 +85,7 @@ public:
 		outputs = Matrix::ElementwiseAddition(*outputs, *bias_o);
 		Matrix::Sigmoid(outputs);
 
-		std::cout << "Returning Prediction" << std::endl;
+		std::cout << "\nReturning Prediction" << std::endl;
 		return outputs;
 	}
 
@@ -111,7 +110,7 @@ public:
 			if(i % batch_size == 0)
 				for(int j = 0; j < batch_size; ++j){
 					for(int k = 0; k < output_nodes; ++k){
-						input_batches.Set({(int)ceil(i/batch_size), j, k, 0}, (float)target_array.matrix_values[i + (j*output_nodes) + k]);
+						target_batches.Set({(int)ceil(i/batch_size), j, k, 0}, (float)target_array.matrix_values[i + (j*output_nodes) + k]);
 					}
 				}
 		}
@@ -134,6 +133,8 @@ public:
 
 					std::shared_ptr<Matrix> inputs = input_batch->GetChunk({p});
 					std::shared_ptr<Matrix> targets = target_batch->GetChunk({p});
+
+					std::cout << targets->matrix_values[0] << std::endl;
 
 					std::shared_ptr<Matrix> hidden1 = Matrix::DotProduct(*weights[0], *inputs);
 
@@ -164,7 +165,7 @@ public:
 					sample_weights_deltas.push_back(weights_ho_deltas);
 					sample_bias_deltas.push_back(gradients);
 					
-					for(int i = 0; i < hidden_layers-1; ++i){
+					for(int i = 0; i < hidden_layers - 1; ++i){
 						std::shared_ptr<Matrix> current = weights[weights.size() -(i+1)];
 						std::shared_ptr<Matrix> new_hidden = hiddens[hiddens.size()-(i+2)];
 
@@ -183,6 +184,7 @@ public:
 					}
 
 					std::shared_ptr<Matrix> weights1_tr = Matrix::Transpose(weights[1]);
+					//THIS RETURNS ZEROES
 					std::shared_ptr<Matrix> hidden1_errors = Matrix::DotProduct(*weights1_tr, *last_errors); 
 
 					Matrix::SigmoidPrime(hidden1);
@@ -201,11 +203,11 @@ public:
 
 				std::vector<std::shared_ptr<Matrix>> summed_weights_deltas = {};
 				for(std::shared_ptr<Matrix> w : weights){
-					summed_weights_deltas.push_back(w);
+					summed_weights_deltas.push_back(std::make_shared<Matrix>(w->shape));
 				}
 				std::vector<std::shared_ptr<Matrix>> summed_bias_deltas = {};
 				for(std::shared_ptr<Matrix> b : biases){
-				 	summed_bias_deltas.push_back(b);
+				 	summed_bias_deltas.push_back(std::make_shared<Matrix>(b->shape));
 				}
 
 				for(int i = 0; i < summed_weights_deltas.size(); ++i){

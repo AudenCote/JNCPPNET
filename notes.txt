@@ -9,3 +9,6 @@ storing weights/bias data like pickling in python
 work in failsafe for batch overflow in trainandpropogate in DNN
 
 verify input arrays to trainandpropogate should be 2 *1 matrices (vert vectors)
+
+
+hidden1_errors -> all zeroes
