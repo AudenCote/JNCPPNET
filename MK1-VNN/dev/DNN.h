@@ -8,6 +8,15 @@ class NeuralNetwork {
 private:
 	float learning_rate = .1f;
 
+	int input_nodes;
+	int output_nodes;
+	std::vector<int> hidden_nodes_array;
+
+	int hidden_layers = 0;
+
+	std::vector<std::shared_ptr<Matrix>> weights;
+	std::vector<std::shared_ptr<Matrix>> biases;
+
 	double mean_square_error(Matrix targets, Matrix output) { 
 		std::shared_ptr<Matrix> error = Matrix::ElementwiseSubtraction(targets, output);
 		error->Square();
@@ -16,12 +25,6 @@ private:
 	}
 
 public:
-	int input_nodes;
-	int output_nodes;
-	std::vector<int> hidden_nodes_array;
-	int hidden_layers = 0;
-	std::vector<std::shared_ptr<Matrix>> weights;
-	std::vector<std::shared_ptr<Matrix>> biases;
 
 	NeuralNetwork(int in_nodes, int out_nodes, float rate) 
 		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { }
@@ -72,7 +75,6 @@ public:
 		std::shared_ptr<Matrix> hidden1 = Matrix::DotProduct(*weights[0], input_array);
 		hidden1 = Matrix::ElementwiseAddition(*hidden1, *bias_h);
 		Matrix::Sigmoid(hidden1);
-		std::shared_ptr<Matrix>& new_hidden = hidden1;
 
 		std::vector<std::shared_ptr<Matrix>> hiddens= {hidden1};
 		for(int i = 0; i < hidden_layers - 1; ++i){
@@ -89,7 +91,7 @@ public:
 		return outputs;
 	}
 
-	void feed_and_propogate(Matrix& input_array, Matrix& target_array, int epochs, int batch_size) {
+	void feed_and_propogate(Matrix& input_array, Matrix& target_array, int epochs, int batch_size, bool print = true) {
 
 		if(input_array.shape[0] != target_array.shape[0])
 			std::cout << "Different Sample Lengths" << std::endl;
@@ -239,34 +241,17 @@ public:
 				weights[0] = Matrix::ElementwiseAddition(*weights[0], *summed_weights_deltas[0]);
 				biases[0] = Matrix::ElementwiseAddition(*biases[0], *summed_bias_deltas[0]);
 
-
-				std::cout << "\n" << "================" << std::endl;
-				std::cout << "Epoch: " << e + 1 << std::endl;
-				std::cout << "Number of Epochs: " << epochs << std::endl;
-				std::cout << "Batch: " << b + 1 << std::endl;
-				std::cout << "Number of Batches: " << ceil(input_array.shape[0]/batch_size) << std::endl;
-				std::cout << "Batch Size: " << batch_size << std::endl;
-				std::cout << "Loss: " << loss << std::endl;
-				std::cout << "================" << "\n" << std::endl;
-
+				if(print){
+					std::cout << "\n" << "================" << std::endl;
+					std::cout << "Epoch: " << e + 1 << std::endl;
+					std::cout << "Number of Epochs: " << epochs << std::endl;
+					std::cout << "Batch: " << b + 1 << std::endl;
+					std::cout << "Number of Batches: " << ceil(input_array.shape[0]/batch_size) << std::endl;
+					std::cout << "Batch Size: " << batch_size << std::endl;
+					std::cout << "Loss: " << loss << std::endl;
+					std::cout << "================" << "\n" << std::endl;
+				}
 			}
 		}
 	}
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
