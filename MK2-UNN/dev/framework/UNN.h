@@ -135,7 +135,7 @@ private:
 		}
 	}
 public:
-	NeuralNetwork(int in_nodes, int out_nodes, float rate) 
+	NeuralNetwork(const int in_nodes, const int out_nodes, const float rate) 
 		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { std::cout << "Neural Network Created" << std::endl; }
 
 	~NeuralNetwork() { std::cout << "Neural Network Destroyed" << std::endl; }
@@ -150,7 +150,7 @@ public:
 		handle_trainables(-2, inner_layers[inner_layers.size() - 1]);
 	}
 
-	void FullyConnected(nodes){
+	void FullyConnected(int nodes){
 
 		fully_connected_nodes_array.push_back(nodes);
 		inner_layers.push_back(0);
@@ -168,7 +168,7 @@ public:
 		}
 	}
 
-	void MaxPool(filter_size, stride) {
+	void MaxPool(const int filter_size, const int stride) {
 		int maxpool_output_vals = image_channels * pow((int)((image[1] - filter_size)/stride) + 1, 2);
 	}
 
