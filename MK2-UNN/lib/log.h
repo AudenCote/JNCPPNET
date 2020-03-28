@@ -27,6 +27,7 @@ public:
     std::cout << '\n' << str << '\n' << std::endl;
     SetConsoleTextAttribute(hConsole, 15);
   }
+  
 };
 
 #endif
