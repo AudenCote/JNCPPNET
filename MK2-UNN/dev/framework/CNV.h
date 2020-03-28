@@ -1,3 +1,6 @@
+#ifndef CNV_INCLUDE
+#define CNV_INCLUDE
+
 #include "../lib/matrix.h"
 
 class CNV {
@@ -131,3 +134,7 @@ class CNV {
 	}
 
 }
+
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef FCL_INCLUDE
+#define FCL_INCLUDE
+
 #include "../lib/matrix.h"
 
 class fully_connected{
@@ -29,3 +32,6 @@ class fully_connected{
 	}
 
 }
+
+
+#endif

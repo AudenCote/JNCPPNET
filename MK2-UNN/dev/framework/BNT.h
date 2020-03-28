@@ -5,6 +5,9 @@
 //https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c
 //https://chrisyeh96.github.io/2017/08/28/deriving-batchnorm-backprop.html
 
+#ifndef BNT_INCLUDE
+#define BNT_INCLUDE
+
 #include "../lib/matrix.h"
 #include <cmath>
 
@@ -83,3 +86,6 @@ public:
 		return output_batch;
 	}
 }
+
+
+#endif

@@ -6,8 +6,8 @@
 NeuralNetwork create_network(int input_nodes, int output_nodes, float learning_rate){
 	return std::make_shared<NeuralNetwork>(input_nodes, output_nodes, learning_rate);
 }
-void convolutional_layer(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0){
-	networks[network_idx].Convolutional(image_width, image_height, filter_size, )
+void convolutional_layer(NeuralNetwork& network, const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0){
+	network.Convolutional(image_width, image_height, filter_size, )
 }
 void max_pooling_layer(const int filter_size, const int stride){
 

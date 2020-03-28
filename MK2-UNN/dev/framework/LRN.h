@@ -3,6 +3,8 @@
 //https://towardsdatascience.com/difference-between-local-response-normalization-and-batch-normalization-272308c034ac
 //https://en.wikipedia.org/wiki/Lateral_inhibition
 
+#ifndef LRN_INCLUDE
+#define LRN_INCLUDE
 
 #include "../lib/matrix.h"
 #include <cmath>
@@ -99,3 +101,6 @@ public:
 
 	}
 }
+
+
+#endif

@@ -55,7 +55,21 @@ class PythonNetwork:
     def __del__(self):
         del self.cobj
 
+
+    def FullyConnected(int nodes):
+    	self.cobj.FullyConnected(nodes)
+
     def Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels):
+    	self.cobj.Convolutional(image_width, image_height, filter_size, filters, stride, channels)
+
+    def MaxPool(const int filter_size, const int stride):
+    	self.cobj.MaxPool(filter_size, stride)
+
+    def LocalResponseNormalization(const char* type, const double epsilon, const float alpha, const float beta, const float radius):
+    	self.cobj.LocalResponseNormalization(type, epsilon, alpha, beta, radius)
+
+    def BatchNormalization(const float gamma, const float beta, const double epsilon)
+    	self.cobt.BatchNormalization(gamme, beta, epsilon)
 
 
 

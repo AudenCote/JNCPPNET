@@ -1,3 +1,6 @@
+#ifndef MATRIX_INCLUDE
+#define MATRIX_INCLUDE
+
 #include <iostream>
 #include <vector>
 #include "utils.h"
@@ -293,3 +296,5 @@ public:
         return highest;
     }
 };
+
+#endif
