@@ -81,7 +81,7 @@ private:
 				fcl_idx += 1;
 			}else if(i == 1){
 				if(prev_i != 4 && prev_i != 5){
-					std::cout << "Local response normalization layers are designed primarily to come after a convolutional-type layer" << std::endl;
+					Logger::Info("Local response normalization layers are designed primarily to come after a convolutional-type layer");
 				}
 
 				if()
@@ -92,12 +92,12 @@ private:
 				lrn_intra_idx += 1;
 			}else if(i == 3){
 				if(prev_i == -1){
-					std::cout << "Batch Normalization is not intended to be used on the input layer - consider randomizing inputs, etc.\nNeural network being structured in accordance with the users preferences" << std::endl;
+					Logger::Info("Batch Normalization is not intended to be used on the input layer - consider randomizing inputs, etc.\nNeural network being structured in accordance with the users preferences");
 					std::vector<int> bnt_s = {input_nodes, 1};
 				}else if(prev_i == 0){
 					std::vector<int> bnt_s = {fully_connected_nodes_array[fcl_idx - 1], 1};
 				}else if(prev_i == 1 || prev_i == 2){
-					std::cout << "Batch Normalization is not intended to be used in conjunction with local response normalization\nNeural network being structured in accordance with the users preferences" << std::endl;
+					Logger::Info("Batch Normalization is not intended to be used in conjunction with local response normalization\nNeural network being structured in accordance with the users preferences");
 					std::vector<int> bnt_s = {, 1};
 				}
 				bnt_inner_shapes.push_back(bnt_s);
@@ -107,7 +107,7 @@ private:
 				if(prev_i == -1){
 
 				}else if(prev_i == 0){
-					throw(std::logic_error("With this network version, convolutional layers may not come after fully connected (dense) layers"));
+					throw(std::logic_error("With this network version, convolutional layers may not come after fully connected (dense) layers\nException thrown in function: NeuralNetwork::check_params()"));
 				}else if(prev_i == 4){
 					std::vector<int> w_s = {}; 
 					std::vector<int> b_s = {}; 
@@ -126,19 +126,19 @@ private:
 				if(prev_i == 4){
 
 				}else{
-					throw(std::logic_errror("With this network version, max-pooling layers must come directly after a convolutional layer, or a normalization layer which comes directly after a convolutional layer"));
+					throw(std::logic_errror("With this network version, max-pooling layers must come directly after a convolutional layer, or a normalization layer which comes directly after a convolutional layer\nException thrown in function: NeuralNetwork::check_params()"));
 				}
 			}
 		}
 		catch(const std::logic_error& e) {
-			std::cout << e.what() << "\nException thrown in function: NeuralNetwork::check_params()" << std::endl;
+			Logger::Error(e.what());
 		}
 	}
 public:
 	NeuralNetwork(const int in_nodes, const int out_nodes, const float rate) 
-		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { std::cout << "Neural Network Created" << std::endl; }
+		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { Logger::Info("Neural Network Object Created"); }
 
-	~NeuralNetwork() { std::cout << "Neural Network Destroyed" << std::endl; }
+	~NeuralNetwork() { Logger::Info("Neural Network Object Destroyed"); }
 
 	void InitializeParameters(){
 		handle_trainables(inner_layers[0], -1);
@@ -179,14 +179,14 @@ public:
 			}else if(type == "intra_channel"){
 				inner_layers.push_back(2);
 			}else{
-				throw std::invalid_argument("\nInvalid Local Response Normalization Type. Try any of the following:\n
-					\t- inter_channel\n\t- intra_channel");
+				throw(std::invalid_argument("\nInvalid Local Response Normalization Type. Try any of the following:\n
+					\t- inter_channel\n\t- intra_channel\nException thrown in function: NeuralNetwork::LRN()"));
 			}
 
 			std::vector<float> inp_vec = {epsilon, alpha, beta, radius}; LRN_info.push_back(inp_vec);
 		}
 		catch(const std::invalid_argument& e) {
-			std::cout << e.what() << "\nException thrown in function: NeuralNetwork::LRN()" << std::endl;
+			Logger::Error(e.what())
 		}
 	}
 

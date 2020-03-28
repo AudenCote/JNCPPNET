@@ -17,11 +17,11 @@ class fully_connected{
 			}else if(activation == "ReLU"){
 
 			}else{
-				throw(std::invalid_argument("Invalid non-linear (activation) function type"));
+				throw(std::invalid_argument("Invalid non-linear (activation) function type\nException thrown in function: fully_connected::feed_forward()"));
 			}
 		}
 		catch (const std::invalid_argument& e) {
-			std::cout << e.what() << "\nException thrown in function: fully_connected::feed_forward()" << std::endl;
+			Logger::Error(e.what());
 			return nullptr; 
 		}
 

@@ -51,7 +51,7 @@ class PythonNetwork:
     def __init__(self, int input_nodes, int output_nodes, float learning_rate):
         self.cobj = new NeuralNetwork(input_nodes, output_nodes, learning_rate)
         if self.cobj == NULL:
-            raise MemoryError('Not enough memory.')
+            raise MemoryError('Not enough memory')
     def __del__(self):
         del self.cobj
 

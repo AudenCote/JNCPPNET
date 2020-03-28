@@ -16,10 +16,10 @@ public:
 	static shared_ptr<Matrix> normalize_batch(const Matrix& input_batch, const float gamma, const float beta, const double epsilon = .000000001) {
 		try {
 			if(input_batch.dims != 4 && input_batch.dims != 3){
-				throw(std::invalid_argument("Invalid matrix dimensions: input matrix must have either three or four non-zero dimensions (a full batch of samples of arbitrary length)"));
+				throw(std::invalid_argument("Invalid matrix dimensions: input matrix must have either three or four non-zero dimensions (a full batch of samples of arbitrary length)\nException thrown in function: LRN::intra_channel()"));
 			}else{
 				for(int v : input_batch.shape){
-					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have either three or four non-zero dimensions (a full batch of samples of arbitrary length)"));
+					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have either three or four non-zero dimensions (a full batch of samples of arbitrary length)\nException thrown in function: LRN::intra_channel()"));
 				}
 			}
 
@@ -76,7 +76,7 @@ public:
 			output_batch.Add(beta);
 		}
 		catch(const std::invalid_argument& e) {
-			std::cout << e.what() << "\nException thrown in function: LRN::intra_channel()" << std::endl;
+			Logger::Error(e.what());
 			return nullptr; 
 		} 
 		

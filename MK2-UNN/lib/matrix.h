@@ -5,6 +5,7 @@
 #include <math.h>
 #include <memory>
 #include <ctime>
+#include "log.h"
 
 
 class Matrix {
@@ -13,10 +14,10 @@ private:
 
         try{
             if(mat1.num_vals != mat2.num_vals)
-                throw std::invalid_argument("Matrix dimensions do not match");
+                throw std::invalid_argument("Matrix dimensions do not match in function ElementwiseAddition");
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function ElementwiseAddition" << std::endl << std::endl;
+            Logger::Error(e.what());
         }
 
         std::shared_ptr<Matrix> outmat = std::make_shared<Matrix>(mat1.shape);
@@ -77,21 +78,21 @@ public:
 
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
-                    throw std::invalid_argument("Invalid Indexing");
+                    throw std::invalid_argument("Invalid Indexing in function GetVal");
             if(init_list.size() != dims){
-                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetChunk function instead of GetVal --");
+                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetChunk function instead of GetVal -- in function GetVal");
             }
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
                 idx = idx * shape[d] + (I[d]);
             if(idx > num_vals)
-                throw std::invalid_argument("Invalid Indexing");
+                throw std::invalid_argument("Invalid Indexing in function GetVal");
             return matrix_values[idx];
 
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function GetVal" << std::endl << std::endl;
+            Logger::Error(e.what());
             return 0;
         }
     }
@@ -107,12 +108,12 @@ public:
 
             for(int d = 0; d < init_list.size(); ++d){
                 if(I[d] >= shape[d] || I[d] < 0){
-                    throw std::invalid_argument("Invalid Indexing");
+                    throw std::invalid_argument("Invalid Indexing in function GetChunk");
                 }
             }
 
             if(init_list.size() >= dims){
-                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetVal function instead of GetChunk --");
+                throw std::invalid_argument("Invalid Indexing -- suggested fix: Use GetVal function instead of GetChunk -- in function GetChunk");
             }
 
             int start_idx = 0;
@@ -143,7 +144,7 @@ public:
             return out_mat;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function GetChunk" << std::endl << std::endl;
+            Logger::Error(e.what());
             return nullptr;
         }
 
@@ -158,19 +159,19 @@ public:
             for(int d = 0; d < dims; ++d)
                 if(I[d] >= shape[d] || I[d] < 0)
                     //std::cout << d << " " << I[d] << " " << shape[d] << std::endl;
-                    throw std::invalid_argument("Invalid Indexing Code 0"); 
+                    throw std::invalid_argument("Invalid Indexing Code 0 in function Set"); 
 
             int idx = I[0];
             for(int d = 1; d < dims; ++d)
                 idx = idx * shape[d] + (I[d]);
 
             if(idx > num_vals)
-                throw std::invalid_argument("Invalid Indexing Code 1");
+                throw std::invalid_argument("Invalid Indexing Code 1 in function Set");
 
             matrix_values[idx] = val;
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << " in function Set" << std::endl << std::endl;
+            Logger::Error(e.what());
         }
     }
 
@@ -203,13 +204,13 @@ public:
 
         try{
             if(mat1.dims != 2 || mat2.dims != 2)
-                throw std::invalid_argument("Invalid matrix dimensions");
+                throw std::invalid_argument("Invalid matrix dimensions in function DotProduct");
             if(mat1.shape[1] != mat2.shape[0]){
-                throw std::invalid_argument("Matrix dimensions don't match: Invalid matrix dimensions");
+                throw std::invalid_argument("Matrix dimensions don't match: Invalid matrix dimensions in function DotProduct");
             }
         }
         catch(const std::invalid_argument& e) {
-            std::cout << std::endl << e.what() << "Exception thrown in function DotProduct" << std::endl << std::endl;
+            Logger::Error(e.what());
         }
 
         int row1 = mat1.shape[0], col1 = mat1.shape[1], row2 = mat2.shape[0], col2 = mat2.shape[1];
@@ -276,7 +277,7 @@ public:
             }
             return out_mat;
         }else {
-            std::cout << "Cannot transpose matrix of invalid dimensions" << std::endl;
+            Logger::Error("Cannot transpose matrix of invalid dimensions");
             return mat;
         }
     }

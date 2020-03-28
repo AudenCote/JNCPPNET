@@ -15,14 +15,14 @@ public:
 
 		try{
 			if(input_matrix.dims != 3) {
-				throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions"));
+				throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions\nException thrown in function: LRN::intra_channel()"));
 			}else{
 				for(int v : input_matrix.shape){
-					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions"));
+					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions\nException thrown in function: LRN::intra_channel()"));
 				}
 			}
 			if(radius <= 1){
-				throw(std::invalid_argument("Invalid radius (i.e. normalization neighborhood, window size) value"))
+				throw(std::invalid_argument("Invalid radius (i.e. normalization neighborhood, window size) value\nException thrown in function: LRN::intra_channel()"))
 			}
 
 			Matrix output_matrix = input_matrix;
@@ -49,7 +49,7 @@ public:
 
 		}
 		catch(const std::invalid_argument& e) {
-			std::cout << e.what() << "\nException thrown in function: LRN::intra_channel()" << std::endl;
+			Logger.Error(e.what());
 			return nullptr; 
 		} 
 
@@ -60,14 +60,14 @@ public:
 
 		try{
 			if(input_matrix.dims != 3) {
-				throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions"));
+				throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions\nException thrown in function: LRN::inter_channel()"));
 			}else{
 				for(int v : input_matrix.shape){
-					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions"));
+					if(v == 0) throw(std::invalid_argument("Invalid input matrix dimensions: input matrix must have three non-zero dimensions\nException thrown in function: LRN::inter_channel()"));
 				}
 			}
 			if(radius <= 1){
-				throw(std::invalid_argument("Invalid radius (i.e. normalization neighborhood, window size) value"))
+				throw(std::invalid_argument("Invalid radius (i.e. normalization neighborhood, window size) value\nException thrown in function: LRN::inter_channel()"))
 			}
 
 			Matrix output_matrix = input_matrix;
@@ -91,7 +91,7 @@ public:
 
 		}
 		catch(const std::invalid_argument& e) {
-			std::cout << e.what() << "\nException thrown in function: LRN::inter_channel()" << std::endl;
+			Logger::Error(e.what());
 			return nullptr; 
 		} 
 
