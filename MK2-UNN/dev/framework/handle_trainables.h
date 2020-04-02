@@ -10,7 +10,7 @@
 //convolutional layer -> 4
 //max-pooling layer -> 5
 
-int get_lrn_outputs(const int layer_index){
+int get_norm_layer_outputs(const int layer_index){
 	int last_relevant = -5;
 	//might have to start at layer_index - 1? doing this convolutedly so that it can be error-checked, can be reworked
 	for(int i = layer_index; i >= 0; i++){
@@ -45,8 +45,8 @@ void NeuralNetwork::handle_trainables(const layer_index, const int prev_i, const
 			}else if(prev_i == 5){
 				std::vector<int> w_s = {output_nodes, maxpool_nodes_array[mxp_idx - 1]};
 			}else if(prev_i == 1 || prev_i == 2){
-				if(get_lrn_outputs(layer_index) != -5){
-					std::vector<int> w_s = {output_nodes, get_lrn_outputs(layer_index)};
+				if(get_norm_layer_outputs(layer_index) != -5){
+					std::vector<int> w_s = {output_nodes, get_norm_layer_outputs(layer_index)};
 				}else{
 					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
 				}
