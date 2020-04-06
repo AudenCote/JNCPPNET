@@ -30,6 +30,7 @@ private:
 	std::vector<int> maxpool_nodes_array; //for use before fully connected layer ONLY 
 	std::vector<std::vector<int>> maxpool_info_array;
 	std::vector<std::vector<float>> LRN_info;
+	std::vector<std::vector<int>> LRN_dimensions;
 	std::vector<std::vector<float>> BNT_info;
 	std::vector<const char*> fully_connected_activations;
 

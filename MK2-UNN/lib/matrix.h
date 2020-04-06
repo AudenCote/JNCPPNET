@@ -39,6 +39,14 @@ private:
          return 1/(1+exp(-(x)))*(1-(1/(1+exp(-(x)))));
     }
 
+    static float relu_operator(float x){
+        if(x < 0){
+            x = 0;
+        }
+
+        return x;
+    }
+
     void init_zeroes() {
         for (int i = 0; i < num_vals; ++i){
             matrix_values.push_back(0.0f);
@@ -282,6 +290,20 @@ public:
 
     static void SigmoidPrime(std::shared_ptr<Matrix> mat) {
         mat->Map(sigmoid_prime_operator);
+    }
+
+    static void ReLU(std::shared_ptr<Matrix> mat){
+        mat->Map(relu_operator);
+    }
+
+    static void Softmax(std::chared_ptr<Matrix> mat){
+        float exp_sum = 0;
+        for(int val : mat->matrix_values){
+            exp_sum += exp(val);
+        }
+        for(int i = 0; i < mat->num_vals; i++){
+            mat->matrix_values[i] = exp(mat->matrix_values[i])/exp_sum;
+        }
     }
 
     static std::shared_ptr<Matrix> Transpose(std::shared_ptr<Matrix> mat) {

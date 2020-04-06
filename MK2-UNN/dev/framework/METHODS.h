@@ -15,7 +15,7 @@ void NeuralNetwork::InitializeParameters(){
 	handle_trainables(inner_layers.size() - 1, -2, inner_layers[inner_layers.size() - 1]);
 }
 
-void NeuralNetwork::FullyConnected(int nodes, const char* activation = "sigmoid"){
+void NeuralNetwork::FullyConnected(const int nodes, const char* activation = "sigmoid"){
 	fully_connected_activations.push_back(activation)
 	fully_connected_nodes_array.push_back(nodes);
 	inner_layers.push_back(0);
@@ -40,7 +40,7 @@ void NeuralNetwork::MaxPool(const int filter_size, const int stride) {
 	inner_layers.push_back(5);
 }
 
-void NeuralNetwork::LocalResponseNormalization(const char* type, const float epsilon, const float alpha, const float beta, const float radius){
+void NeuralNetwork::LocalResponseNormalization(const char* type, const int channels, const int width, const int height, const float epsilon, const float alpha, const float beta, const float radius){
 	try{
 		if(type == "inter_channel"){
 			inner_layers.push_back(1);

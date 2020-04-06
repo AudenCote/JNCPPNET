@@ -201,7 +201,4 @@ void NeuralNetwork::handle_trainables(const layer_index, const int prev_i, const
 	}
 }
 
-
-
 #endif
-

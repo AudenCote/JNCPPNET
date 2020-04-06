@@ -9,12 +9,14 @@ namespace fully_connected{
 	//biases for that layer, and non-linearity type, and returns output values for that layer
 	static std::shared_ptr<Matrix> feed_forward (const Matrix& inputs, const Matrix& weights, const Matrix& biases, const char* activation = "sigmoid") {
 		try{
-			std::shared_ptr<Matrix> output = Matrix::DotProduct(weights, inputs);
-			output = Matrix::ElementwiseAddition(output, biases);
-			if(activation == "sigmoid"){
+			std::shared_ptr<Matrix> output = Matrix::ElementwiseAddition(Matrix::DotProduct(weights, inputs), biases);
+			if(activation == "sigmoid" || activation == "Sigmoid"){
 				Matrix::Sigmoid(output);
-			}else if(activation == "ReLU"){
-
+			}else if(activation == "ReLU" || activation == "relu" || activation == "Relu"){
+				Matrix::ReLU(output);
+			}else if(activation == "softmax" || activation == "Softmax"){
+				Matrix::Softmax(output);
+			}
 			}else{
 				throw(std::invalid_argument("Invalid non-linear (activation) function type\nException thrown in function: fully_connected::feed_forward()"));
 			}
