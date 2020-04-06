@@ -3,9 +3,7 @@
 
 #include "../lib/matrix.h"
 
-class CNV {
-
-	CNV() { std::cout << "Improper use of CNV class" << std::endl; }
+namespace CNV {
 
 	std::shared_ptr<Matrix> convolution(const Matrix& image, const Matrix& filt, const Matrix& bias, const int stride, const float alpha = .01f, const filter_size = 5) {
 
@@ -35,7 +33,7 @@ class CNV {
 			int out_dim = (int)((in_dim - f)/stride) + 1;
 
 			std::vector<int> output_matrix_shape = {filt.shape[0], out_dim, out_dim};
-			std::shared_ptr<Matrix> output_matrix = std::make_shared(output_matrix_shape);
+			std::shared_ptr<Matrix> output_matrix = std::make_shared<Matrix>(output_matrix_shape);
 
 			for(int f = 0; f < filt.shape[0]; f++){
 				int curr_y = 0; int out_y = 0;

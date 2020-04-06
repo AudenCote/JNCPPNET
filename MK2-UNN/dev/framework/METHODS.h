@@ -15,7 +15,8 @@ void NeuralNetwork::InitializeParameters(){
 	handle_trainables(inner_layers.size() - 1, -2, inner_layers[inner_layers.size() - 1]);
 }
 
-void NeuralNetwork::FullyConnected(int nodes){
+void NeuralNetwork::FullyConnected(int nodes, const char* activation = "sigmoid"){
+	fully_connected_activations.push_back(activation)
 	fully_connected_nodes_array.push_back(nodes);
 	inner_layers.push_back(0);
 }

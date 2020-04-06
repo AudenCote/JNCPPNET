@@ -10,7 +10,7 @@
 //convolutional layer -> 4
 //max-pooling layer -> 5
 
-int get_norm_layer_outputs(const int layer_index){
+int NeuralNetwork::get_norm_layer_outputs(const int layer_index){
 	int last_relevant = -5;
 	//might have to start at layer_index - 1? doing this convolutedly so that it can be error-checked, can be reworked
 	for(int i = layer_index; i >= 0; i++){
@@ -48,10 +48,14 @@ void NeuralNetwork::handle_trainables(const layer_index, const int prev_i, const
 				if(get_norm_layer_outputs(layer_index) != -5){
 					std::vector<int> w_s = {output_nodes, get_norm_layer_outputs(layer_index)};
 				}else{
-					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
 				}
 			}else if(prev_i == 3){
-				//sort out what to do with all different types of layers if previous layer is batch normalization. I think do the same thing as in get_lrn_outputs.
+				if(get_norm_layer_outputs(layer_index) != -5){
+					std::vector<int> w_s = {output_nodes, get_norm_layer_outputs(layer_index)};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
 			}
 			std::vector<int> b_s = {output_nodes, 1}; 
 			weights.push_back(std::make_shared<Matrix>(w_s));
@@ -64,67 +68,132 @@ void NeuralNetwork::handle_trainables(const layer_index, const int prev_i, const
 			}else if(prev_i == 0){
 				std::vector<int> w_s = {fully_connected_nodes_array[fcl_idx], fully_connected_nodes_array[fcl_idx - 1]}
 			}else if(prev_i == 1 || prev_i == 2){
-
+				if(get_norm_layer_outputs(layer_index) != -5){
+					std::vector<int> w_s = {output_nodes, get_norm_layer_outputs(layer_index)};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
 			}else if(prev_i == 3){
-
+				if(get_norm_layer_outputs(layer_index) != -5){
+					std::vector<int> w_s = {output_nodes, get_norm_layer_outputs(layer_index)};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
 			}else if(prev_i == 5){
-
+				std::vector<int> w_s = {fully_connected_nodes_array[fcl_idx], maxpool_nodes_array[mxp_idx - 1]};
 			}
 			std::vector<int> b_s = {fully_connected_nodes_array[fcl_idx], 1}; 
 			weights.push_back(std::make_shared<Matrix>(w_s));
 			biases.push_back(std::make_shared<Matrix>(b_s));
 			fcl_idx += 1;
-		}else if(i == 1){
+		}else if(i == 1 || i == 2){
 			if(prev_i != 4 && prev_i != 5){
 				Logger::Warning("Local response normalization layers are designed primarily to come after a convolutional-type layer");
 			}
 
-			if()
+			if(prev_i == -1){
+				std::vector<int> w_s = {input_nodes, input_nodes};
+				std::vector<int> b_s = {input_nodes, 1}
+			}else if(prev_i == 0){
+				std::vector<int> w_s = {fully_connected_nodes_array[fcl_idx - 1], fully_connected_nodes_array[fcl_idx - 1]};
+				std::vector<int> b_s = {fully_connected_nodes_array[fcl_idx - 1], 1};
+			}
+			//Make sure this is correct
+			else if(prev_i == 1 || prev_i == 2){
+				int glo = get_norm_layer_outputs(layer_index);
+				if(glo != -5){
+					std::vector<int> w_s = {glo, glo};
+					std::vector<int> b_s = {glo, 1};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
+			}else if(prev_i == 3){
+				int glo = get_norm_layer_outputs(layer_index);
+				if(glo != -5){
+					std::vector<int> w_s = {glo, glo};
+					std::vector<int> b_s = {glo, 1};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
+			}else if(prev_i == 4){
+				std::vector<int> w_s = {conv_nodes_array[cnv_idx - 1], conv_nodes_array[cnv_idx - 1]};
+				std::vector<int> b_s = {conv_nodes_array[cnv_idx - 1], 1};
+			}else if(prev_i == 5){
+				std::vector<int> w_s = {maxpool_nodes_array[mxp_idx - 1], maxpool_nodes_array[mxp_idx - 1]};
+				std::vector<int> b_s = {maxpool_nodes_array[mxp_idx - 1], 1};
+			}
 
-			lrn_inter_idx += 1;
-		}else if(i == 2){
-
-			lrn_intra_idx += 1;
+			if(i == 1) { 
+				lrn_inter_idx += 1; 
+			}
+			else if(i == 2) { 
+				lrn_intra_idx += 1; 
+			}
 		}else if(i == 3){
 			if(prev_i == -1){
 				Logger::Warning("Batch Normalization is not intended to be used on the input layer - consider randomizing inputs, etc.\nNeural network being structured in accordance with the users preferences");
 				std::vector<int> bnt_s = {input_nodes, 1};
 			}else if(prev_i == 0){
 				std::vector<int> bnt_s = {fully_connected_nodes_array[fcl_idx - 1], 1};
-			}else if(prev_i == 1 || prev_i == 2){
-				Logger::Warning("Batch Normalization is not intended to be used in conjunction with local response normalization\nNeural network being structured in accordance with the users preferences");
-				std::vector<int> bnt_s = {, 1};
+			}else if(prev_i == 1 || prev_i == 2 || prev_i == 3){
+				if(prev_i != 3) Logger::Warning("Batch Normalization is not intended to be used in conjunction with local response normalization\nNeural network being structured in accordance with the users preferences"); 
+				int glo = get_norm_layer_outputs(layer_index);
+				if(glo != -5){
+					std::vector<int> bnt_s = {glo, 1};
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));
+				}
+			}else if(prev_i == 4){
+				std::vector<int> bnt_s = {conv_nodes_array[cnv_idx - 1], 1};
+			}else if(prev_i == 5){
+				std::vector<int> bnt_s = {maxpool_nodes_array[mxp_idx - 1], 1};
 			}
+
 			bnt_inner_shapes.push_back(bnt_s);
 			std::vector<float> trainables = {gen_random_float(-1, 1), gen_random_float(-1, 1)}; bnt_trainables.push_back(trainables);
 			bnt_idx += 1;
 		}else if(i == 4){
+			std::vector<int> filters_s = {conv_info_array[cnv_idx - 1][3], conv_info_array[cnv_idx - 1][5], conv_info_array[cnv_idx][2], conv_info_array[cnv_idx][2]};
 			if(prev_i == -1){
-
+				int pro = 1;
+				for(int v : filters_s) pro = pro * v;
+				if(pro != input_nodes) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
 			}else if(prev_i == 0){
-				throw(std::logic_error("With this network version, convolutional layers may not come after fully connected (dense) layers\nException thrown in function: NeuralNetwork::check_params()"));
+				int pro = 1;
+				for(int v : filters_s) pro = pro * v;
+				if(pro != fully_connected_nodes_array[fcl_idx - 1]) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
 			}else if(prev_i == 4){
-				std::vector<int> w_s = {}; 
-				std::vector<int> b_s = {}; 
+				int pro = 1;
+				for(int v : filters_s) pro = pro * v;
+				if(pro != conv_nodes_array[cnv_idx - 1]) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
 			}else if(prev_i == 5){
-
+				int pro = 1;
+				for(int v : filters_s) pro = pro * v;
+				if(pro != maxpool_nodes_array[mxp_idx - 1]) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
 			}else if(prev_i == 1 || prev_i == 2){
-
+				if(glo != -5){
+					int pro = 1;
+					for(int v : filters_s) pro = pro * v;
+					if(pro != glo) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));			
+				}
 			}else if(prev_i == 3){
-
+				if(glo != -5){
+					int pro = 1;
+					for(int v : filters_s) pro = pro * v;
+					if(pro != glo) throw(std::logic_error("Image dimensions do not match previous layer node count -- logic error thrown in function NeuralNetwork::handle_trainables() while constructing convolutional layer"));
+				}else{
+					throw(std::logic_error("No valid previous layers to check for output nodes. Should have hit at least input layer -- logic error\nException thrown in function NeuralNetwork::handle_trainables()"));			
+				}
 			}
 			std::vector<int> b_s = {conv_info[cnv_idx][3], 1}; //one bias for each filter - same over channels, to put emphasis on features
 			weights.push_back(std::make_shared<Matrix>(w_s));
 			biases.push_back(std::make_shared<Matrix>(b_s));
 			cnv_idx += 1;
 		}else if(i == 5){
-			if(prev_i == 4){
-
-			}else{
-				throw(std::logic_errror("With this network version, max-pooling layers must come directly after a convolutional layer, or a normalization layer which comes directly after a convolutional layer\nException thrown in function: NeuralNetwork::check_params()"));
-			}
-
-			mxp_idx += 1;
+			//max-pooling layers use no trainable parameters, but still need to increment the count to access layer information when iterating through other layers
+			mxp_idx += 1; 
 		}
 	}
 	catch(const std::logic_error& e) {

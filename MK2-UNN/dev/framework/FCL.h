@@ -3,11 +3,7 @@
 
 #include "../lib/matrix.h"
 
-class fully_connected{
-
-	fully_connected() { std::cout << "Improper use of fully_connected class" << std::endl; }
-
-	~fully_connected() { }
+namespace fully_connected{
 
 	//one hidden/output fully connected layer - takes in input values, weights for that layer, 
 	//biases for that layer, and non-linearity type, and returns output values for that layer

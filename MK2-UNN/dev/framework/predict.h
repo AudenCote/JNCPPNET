@@ -11,6 +11,15 @@ static std::shared_ptr<Matrix> Predict(const Matrix& input_array, const bool vec
 	}
 
 
+	if(inner_layers[0] == 0){
+		std::shared_ptr<Matrix> hidden1 = fully_connected::feed_forward(input_matrix, weights[0], biases[0], fully_connected_activations[0]);
+	}else if(inner_layers[0] == 1){
+		std::shared_ptr()
+	}
+
+
+
+
 }
 
 #endif

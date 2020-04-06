@@ -11,10 +11,7 @@
 #include "../lib/matrix.h"
 #include <cmath>
 
-class BNT{
-public:
-
-	BNT() { std::cout << "Improper usage of LRN class" << std::endl; }
+namespace BNT{
 
 	static shared_ptr<Matrix> normalize_batch(const Matrix& input_batch, const float gamma, const float beta, const double epsilon = .000000001) {
 		try {

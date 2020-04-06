@@ -31,6 +31,7 @@ private:
 	std::vector<std::vector<int>> maxpool_info_array;
 	std::vector<std::vector<float>> LRN_info;
 	std::vector<std::vector<float>> BNT_info;
+	std::vector<const char*> fully_connected_activations;
 
 	std::vector<int> inner_layers = {};
 	//input layer -> -1
@@ -49,6 +50,9 @@ private:
 	// - to be put together with batch size to produce total BNT shape for training
 
 	void handle_trainables(int prev_i, int i);
+
+	static int get_norm_layer_outputs(const int ;ayer_index);
+
 public:
 	NeuralNetwork(const int in_nodes, const int out_nodes, const float rate) 
 		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) { Logger::Info("Neural Network Object Created"); }

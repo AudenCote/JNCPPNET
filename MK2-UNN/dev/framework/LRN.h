@@ -9,11 +9,10 @@
 #include "../lib/matrix.h"
 #include <cmath>
 
-class LRN{
-public:
-	LRN() { std::cout << "Improper usage of LRN class" << std::endl; }
+namespace LRN{
 
-	static Matrix intra_channel(const Matrix& input_matrix, const float epsilon, const float alpha, const float beta, const float radius){
+	static Matrix intra_channel(Matrix& input_matrix, const int channels, const int image_width, const image_height, const float epsilon, const float alpha, const float beta, const float radius){
+		input_matrix = Matrix::Reshape(input_matrix, {channels, image_width, image_height});
 
 		try{
 			if(input_matrix.dims != 3) {
@@ -58,7 +57,8 @@ public:
 		return output_matrix;
 	}
 
-	static Matrix inter_channel(Matrix& input_matrix, float epsilon, float alpha, float beta, float radius){
+	static Matrix inter_channel(Matrix& input_matrix, const int channels, const int image_width, const int image_height, const float epsilon, const float alpha, const float beta, const float radius){
+		input_matrix = Matrix::Reshape(input_matrix, {channels, image_width, image_height});
 
 		try{
 			if(input_matrix.dims != 3) {

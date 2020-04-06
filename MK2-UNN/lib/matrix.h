@@ -178,6 +178,21 @@ public:
         }
     }
 
+    static std::shared_ptr<Matrix> Reshape(Matrix& input_matrix, std::initializer_list>int> init_list){
+        if(input_matrix.num_vals != shape_product){
+            Logger::Error("Output and input shapes do not match in function Matrix::Reshape()");
+            return nullptr;
+        }else{
+            std::vector<int> output_shape[init_list.size()];
+            std::copy(init_list.begin(), init_list.end(), output_shape);
+            std::shared_ptr<Matrix> output_matrix = std::make_shared<Matrix>(output_shape);
+
+            output_matrix.matrix_values = input_matrix.matrix_values;
+
+            return output_matrix;
+        }
+    }
+
     void Add(float val) {
         for (int i = 0; i < num_vals; i++)
             matrix_values[i] += val;
