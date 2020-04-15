@@ -332,6 +332,11 @@ public:
 
         return highest;
     }
+
+    static float Average(const Matrix& inp_mat){
+        float sum = inp_mat.Sum();
+        return sum/inp_mat.num_vals;
+    }
 };
 
 #endif

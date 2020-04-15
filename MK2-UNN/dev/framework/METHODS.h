@@ -21,7 +21,7 @@ void NeuralNetwork::FullyConnected(const int nodes, const char* activation = "si
 	inner_layers.push_back(0);
 }
 
-void NeuralNetwork::Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0) {
+void NeuralNetwork::Convolutional(const int image_width, const int image_height, const int filters, const int stride, const int channels = 0, const int filter_size = 5) {
 	int num_conv_output_vals = filters * pow((int)((in_dim - filter_size)/stride) + 1, 2);
 	conv_nodes_array.push_back(num_conv_output_vals);
 	std::vector<int> conv_info = {image_width, image_height, filter_size, filters, stride, channels};
@@ -32,10 +32,10 @@ void NeuralNetwork::Convolutional(const int image_width, const int image_height,
 	}
 }
 
-void NeuralNetwork::MaxPool(const int filter_size, const int stride) {
+void NeuralNetwork::MaxPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride) {
 	int maxpool_output_vals = image_channels * pow((int)((image[1] - filter_size)/stride) + 1, 2);
 	maxpool_nodes_array.push_back(maxpool_output_vals);
-	std::vector<int> maxpool_info = {filter_size, stride};
+	std::vector<int> maxpool_info = {filter_size, stride, channels, image_width, image_height};
 	maxpool_info_array.push_back(maxpool_info);
 	inner_layers.push_back(5);
 }

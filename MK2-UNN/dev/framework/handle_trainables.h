@@ -188,7 +188,7 @@ void NeuralNetwork::handle_trainables(const layer_index, const int prev_i, const
 				}
 			}
 			std::vector<int> b_s = {conv_info[cnv_idx][3], 1}; //one bias for each filter - same over channels, to put emphasis on features
-			weights.push_back(std::make_shared<Matrix>(w_s));
+			weights.push_back(std::make_shared<Matrix>(filters_s));
 			biases.push_back(std::make_shared<Matrix>(b_s));
 			cnv_idx += 1;
 		}else if(i == 5){

@@ -5,7 +5,8 @@
 
 namespace CNV {
 
-	std::shared_ptr<Matrix> convolution(const Matrix& image, const Matrix& filt, const Matrix& bias, const int stride, const float alpha = .01f, const filter_size = 5) {
+	std::shared_ptr<Matrix> convolution(const Matrix& image, const int channels, const int image_width, const int image_height, const Matrix& filt, const Matrix& bias, const int stride, const filter_size = 5) {
+		Matrix::Reshape(image, {channels, image_height, image_width});
 
 		try {
 			if(filt.dims != 4){
@@ -71,6 +72,7 @@ namespace CNV {
 				}
 			}
 
+			Matrix::Reshape(output_matrix, {filt.shape[0] * out_dim * out_dim, 1});
 			return output_matrix;
 		}
 		catch(const std::invalid_argument& e) {
@@ -83,7 +85,16 @@ namespace CNV {
 		} 
 	}
 
-	std::shared_ptr<Matrix> maxpool(const Matrix& image, const int filter_size = 2, const int stride = 2){
+	std::shared_ptr<Matrix> maxpool(const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2){
+		return genpool(0, image, channels, image_width, image_height, filter_size, stride);
+	}
+
+	std::shared_ptr<Matrix> avgpool(const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2){
+		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
+	}
+
+	std::shared_ptr<Matrix> genpool(const int type, const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2){
+		Matrix::Reshape(image, {channels, image_height, image_width});
 
 		try {
 			int out_dims = (int)((image[1] - filter_size)/stride) + 1;
@@ -115,7 +126,8 @@ namespace CNV {
 						}
 
 						image_section.matrix_values = ismat_vals;
-						downsampled.Set({chan, out_y, out_x}, Matrix::Max(image_section));
+						if(type == 0) downsampled.Set({chan, out_y, out_x}, Matrix::Max(image_section)); //type zero corresponds to max-pooling
+						if(type == 1) downsampled.Set({chan, out_y, out_x}, Matrix::Average(image_section)); //type one corresponds to avg-pooling
 						curr_x = curr_x + stride;
 							out_x = out_x + 1;
 					}
@@ -123,13 +135,17 @@ namespace CNV {
 					out_y = out_y + 1;
 				}
 			}
+
+			Matrix::Reshape(downsampled, {image[0] * out_dims * out_dims, 1});
+			return downsampled;
 		}
 		catch(const std::length_error& e){
 			Logger::Error(e.what());
+			return nullptr;
 		}
-
-
 	}
+
+
 
 }
 
