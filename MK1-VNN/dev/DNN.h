@@ -136,8 +136,6 @@ public:
 					std::shared_ptr<Matrix> inputs = input_batch->GetChunk({p});
 					std::shared_ptr<Matrix> targets = target_batch->GetChunk({p});
 
-					std::cout << targets->matrix_values[0] << std::endl;
-
 					std::shared_ptr<Matrix> hidden1 = Matrix::DotProduct(*weights[0], *inputs);
 
 					hidden1 = Matrix::ElementwiseAddition(*hidden1, *biases[0]);
