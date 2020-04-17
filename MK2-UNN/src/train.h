@@ -1,8 +1,7 @@
 #ifndef train_include
 #define train_include
 
-
-void NeuralNetwork::Train(std::shared_ptr<Matrix> training_data, std::shared_ptr<Matrix> target_data, const char* gradient_descent_type = "mini-batch", int epochs, int batch_size, bool print = true) {
+void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type = "mini-batch", int epochs, int batch_size, bool print = true) {
 	if (training_data.shape[0] != target_data.shape[0])
 		std::cout << "Different Sample Lengths" << std::endl;
 
@@ -53,12 +52,33 @@ void NeuralNetwork::Train(std::shared_ptr<Matrix> training_data, std::shared_ptr
 				std::shared_ptr<Matrix> inputs = input_batch->GetChunk({ p });
 				std::shared_ptr<Matrix> targets = target_batch->GetChunk({ p });
 
-				std::vector<std::shared_ptr<Matrix>>& feed_forward_return_vector = feed_forward_all_template(*inputs, vectorize_inputs = false);
+				std::vector<std::shared_ptr<Matrix>> feed_forward_return_vector = feed_forward_all_template(*inputs, false);
 				std::shared_ptr<Matrix>& outputs = feed_forward_return_vector[0];
-				std::vector<std::shared_ptr<Matrix>> hiddens[inner_layers.size()];
+				std::vector<std::shared_ptr<Matrix>> hiddens;
 				for (int l = 1; l < inner_layers.size(); l++) {
-					hiddens.push_back
+					hiddens.push_back(feed_forward_return_vector[l]);
 				}
+
+				//==================================================================//
+				//																	//
+				//						BACK PROPOGATION 							//
+				//																	//
+				//==================================================================//
+
+				if (output_layer_activation == "sigmoid" || output_layer_activation == "Sigmoid") {
+					loss = NeuralNetwork::mean_square_error(*targets, *outputs);
+					std::shared_ptr<Matrix> last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
+					Matrix::SigmoidPrime(outputs);
+					std::shared_ptr<Matrix> gradients = Matrix::ElementwiseMultiplication(*outputs, *last_errors);
+					gradients->Multiply(learning_rate);
+
+					std::shared_ptr<Matrix> hidden3_tr = Matrix::Transpose(hiddens[hiddens.size() - 1]);
+					std::shared_ptr<Matrix> weights_ho_deltas = Matrix::DotProduct(*gradients, *hidden3_tr);
+
+					sample_weights_deltas.push_back(weights_ho_deltas);
+					sample_bias_deltas.push_back(gradients);
+				}
+
 
 
 
@@ -77,7 +97,7 @@ void NeuralNetwork::Train(std::shared_ptr<Matrix> training_data, std::shared_ptr
 				std::cout << "Epoch: " << e + 1 << std::endl;
 				std::cout << "Number of Epochs: " << epochs << std::endl;
 				std::cout << "Batch: " << b + 1 << std::endl;
-				std::cout << "Number of Batches: " << ceil(input_array.shape[0] / batch_size) << std::endl;
+				std::cout << "Number of Batches: " << ceil(target_data.shape[0] / batch_size) << std::endl;
 				std::cout << "Batch Size: " << batch_size << std::endl;
 				std::cout << "Loss: " << loss << std::endl;
 				std::cout << "================" << "\n" << std::endl;

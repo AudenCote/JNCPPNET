@@ -10,7 +10,7 @@
 
 namespace BNT {
 
-	shared_ptr<Matrix> normalize_batch(const Matrix& input_batch, const float gamma, const float beta, const double epsilon = .000000001) {
+	std::shared_ptr<Matrix> normalize_batch(Matrix& input_batch, const float gamma, const float beta, const double epsilon = .000000001) {
 		try {
 			if (input_batch.dims != 4 && input_batch.dims != 3) {
 				throw(std::invalid_argument("Invalid matrix dimensions: input matrix must have either three or four non-zero dimensions (a full batch of samples of arbitrary length)\nException thrown in function: LRN::intra_channel()"));
@@ -26,7 +26,7 @@ namespace BNT {
 			if (input_batch.dims == 4) {
 				for (int c = 0; c < input_batch.shape[1]; c++) {
 					for (int x = 0; x < input_batch.shape[2]; x++) {
-						for (int y = 0; y < input_batch.shape[3]) {
+						for (int y = 0; y < input_batch.shape[3]; y++) {
 							for (int s = 0; s < input_batch.shape[0]; s++) {
 								float sum = 0;
 								for (int s = 0; s < input_batch.shape[0]; s++) {
@@ -38,7 +38,7 @@ namespace BNT {
 								for (int s = 0; s < input_batch.shape[0]; s++) {
 									stdev_sum = stdev_sum + pow((float)(input_batch.GetVal({ s, c, x, y }) - avg), 2);
 								}
-								float stdev = stdev_sum / input_batch.shape;
+								float stdev = stdev_sum / input_batch.shape[0];
 								float denom = pow(stdev, .5) + epsilon;
 
 								avgd_batch.Set({ s, c, x, y }, avg);
@@ -69,7 +69,7 @@ namespace BNT {
 					}
 				}
 			}
-			shared_ptr<Matrix> output_batch = Matrix::ElementwiseSubtraction(input_batch, avgd_batch);
+			std::shared_ptr<Matrix> output_batch = Matrix::ElementwiseSubtraction(input_batch, avgd_batch);
 			output_batch = Matrix::ElementwiseDivision(*output_batch, denom_batch);
 			output_batch.Multiply(gamma);
 			output_batch.Add(beta);

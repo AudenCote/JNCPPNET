@@ -4,7 +4,7 @@
 
 namespace CNV {
 
-	std::shared_ptr<Matrix> convolution(const Matrix& image, const int channels, const int image_width, const int image_height, const Matrix& filt, const Matrix& bias, const int stride, const filter_size = 5) {
+	std::shared_ptr<Matrix> convolution(Matrix& image, const int channels, const int image_width, const int image_height, Matrix& filt, Matrix& bias, const int stride, const int filter_size = 5) {
 		Matrix::Reshape(image, { channels, image_height, image_width });
 
 		try {
@@ -33,7 +33,7 @@ namespace CNV {
 				}
 			}
 
-			int out_dim = (int)((in_dim - f) / stride) + 1;
+			int out_dim = (int)((image.shape[1] - filter_size) / stride) + 1;
 
 			std::vector<int> output_matrix_shape = { filt.shape[0], out_dim, out_dim };
 			std::shared_ptr<Matrix> output_matrix = std::make_shared<Matrix>(output_matrix_shape);
@@ -43,9 +43,9 @@ namespace CNV {
 				while (curr_y + filt.shape[3] <= image.shape[2]) {
 					int curr_x = 0; int out_x = 0;
 					while (curr_x + filt.shape[2] <= image.shape[1]) {
-						std::vector<int> image_section_shape = { img.shape[0], filt.shape[2], filt.shape[3] }; Matrix image_section = Matrix(image_section_shape);
+						std::vector<int> image_section_shape = { image.shape[0], filt.shape[2], filt.shape[3] }; Matrix image_section = Matrix(image_section_shape);
 						std::vector<float> ismat_vals = {};
-						for (int c = 0; c < img.shape[0]; c++) {
+						for (int c = 0; c < image.shape[0]; c++) {
 							for (int r = curr_y; r < curr_y + filt.shape[3]; r++) {
 								for (int v = curr_x; v < curr_x + filt.shape[2]; v++) {
 									ismat_vals.push_back(image.GetVal({ c, v, r }));
@@ -56,8 +56,8 @@ namespace CNV {
 						if (image_section.num_vals != ismat_vals.size()) {
 							throw(std::length_error("Image section matrix shapes do not match properly\nException thrown in function: LRN::inter_channel()"));
 						}
-						for (int i = 0; i < filt.getChunk({ f }).shape.size(); i++) {
-							if (filt.GetChunk({ f }).shape[i] != image_section.shape[i]) {
+						for (int i = 0; i < filt.GetChunk({ f })->shape.size(); i++) {
+							if (filt.GetChunk({ f })->shape[i] != image_section.shape[i]) {
 								throw(std::length_error("Image section matrix shape does not match filter shape\nException thrown in function: LRN::inter_channel()"));
 							}
 						}
@@ -65,7 +65,7 @@ namespace CNV {
 						image_section.matrix_values = ismat_vals;
 						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(filt.GetChunk[f], image_section);
 						float summed = kernel_times_image_section->Sum();
-						output_matrix->Set({ f, out_y, out_x }, summed + bias.GetVal({ f, 0 }))
+						output_matrix->Set({ f, out_y, out_x }, summed + bias.GetVal({ f, 0 }));
 							curr_x = curr_x + stride;
 						out_x = out_x + 1;
 					}
@@ -74,7 +74,7 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(output_matrix, { filt.shape[0] * out_dim * out_dim, 1 });
+			Matrix::Reshape(*output_matrix, { filt.shape[0] * out_dim * out_dim, 1 });
 			return output_matrix;
 		}
 		catch (const std::invalid_argument& e) {
@@ -88,38 +88,38 @@ namespace CNV {
 	}
 
 	std::shared_ptr<Matrix> convolution_backprop() {
+		
 
 
-
-		return gradients;
+		return nullptr;
 	}
 
-	std::shared_ptr<Matrix> maxpool(const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
+	std::shared_ptr<Matrix> maxpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
 		return genpool(0, image, channels, image_width, image_height, filter_size, stride);
 	}
 
-	std::shared_ptr<Matrix> avgpool(const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
+	std::shared_ptr<Matrix> avgpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
 		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
 	}
 
-	std::shared_ptr<Matrix> genpool(const int type, const Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
+	std::shared_ptr<Matrix> genpool(const int type, Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
 		Matrix::Reshape(image, { channels, image_height, image_width });
 
 		try {
-			int out_dims = (int)((image[1] - filter_size) / stride) + 1;
+			int out_dims = (int)((image.shape[1] - filter_size) / stride) + 1;
 
-			std::vector<int> downsampled_size = { image[0], out_dims, out_dims }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(downsampled_size);
+			std::vector<int> downsampled_size = { image.shape[0], out_dims, out_dims }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(downsampled_size);
 
 			for (int chan = 0; chan < image.shape[0]; chan++) {
 				int curr_y = 0; int out_y = 0;
-				while curr_y + filter_size <= image.shape[1]{
+				while(curr_y + filter_size <= image.shape[1]){
 					int curr_x = 0; int out_x = 0;
-					while curr_x + filter_size <= image[2]{
-						std::vector<int> image_section_shape = {img.shape[0], filter_size, filter_size}; Matrix image_section = Matrix(image_section_shape);
+					while(curr_x + filter_size <= image.shape[2]){
+						std::vector<int> image_section_shape = {image.shape[0], filter_size, filter_size}; Matrix image_section = Matrix(image_section_shape);
 						std::vector<float> ismat_vals = {};
-						for (int c = 0; c < img.shape[0]; c++) {
-							for (int r = curr_y; r < curr_y + filt.shape[3]; r++) {
-								for (int v = curr_x; v < curr_x + filt.shape[2]; v++) {
+						for (int c = 0; c < image.shape[0]; c++) {
+							for (int r = curr_y; r < curr_y + filter_size; r++) {
+								for (int v = curr_x; v < curr_x + filter_size; v++) {
 									ismat_vals.push_back(image.GetVal({c, v, r}));
 								}
 							}
@@ -128,15 +128,10 @@ namespace CNV {
 						if (image_section.num_vals != ismat_vals.size()) {
 							throw(std::length_error("Image section matrix shapes do not match properly"));
 						}
-						for (int i = 0; i < filt.getChunk({f}).shape.size(); i++) {
-							if (filt.GetChunk({f}).shape[i] != image_section.shape[i]) {
-								throw(std::length_error("Image section matrix shape does not match filter shape"));
-							}
-						}
 
 						image_section.matrix_values = ismat_vals;
-						if (type == 0) downsampled.Set({chan, out_y, out_x}, Matrix::Max(image_section)); //type zero corresponds to max-pooling
-						if (type == 1) downsampled.Set({chan, out_y, out_x}, Matrix::Average(image_section)); //type one corresponds to avg-pooling
+						if (type == 0) downsampled->Set({chan, out_y, out_x}, Matrix::Max(image_section)); //type zero corresponds to max-pooling
+						if (type == 1) downsampled->Set({chan, out_y, out_x}, Matrix::Average(image_section)); //type one corresponds to avg-pooling
 						curr_x = curr_x + stride;
 							out_x = out_x + 1;
 					}
@@ -145,7 +140,7 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(downsampled, { image[0] * out_dims * out_dims, 1 });
+			Matrix::Reshape(*downsampled, { image.shape[0] * out_dims * out_dims, 1 });
 			return downsampled;
 		}
 		catch (const std::length_error& e) {

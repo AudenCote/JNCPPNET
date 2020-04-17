@@ -59,7 +59,7 @@ public:
     int num_vals = 1;
     std::vector<float> matrix_values;
 
-    Matrix(std::vector<int>& params) : dims(params.size()), shape(params) {
+    Matrix(std::vector<int> params) : dims(params.size()), shape(params) {
         for (int val : params) { num_vals *= val; }
         init_zeroes();
     }
@@ -80,7 +80,7 @@ public:
 
     float GetVal(std::initializer_list<int> init_list) {
 
-        int I[init_list.size()];
+        std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
 
         try {
@@ -110,7 +110,7 @@ public:
 
     std::shared_ptr<Matrix> GetChunk(std::initializer_list<int> init_list) {
 
-        int I[init_list.size()];
+        std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
 
         try {
@@ -161,9 +161,9 @@ public:
 
     }
 
-    void Set(std::initializer_list<int> init_list, float val) {
+    void Set(const std::initializer_list<int> init_list, float val) {
 
-        int I[init_list.size()];
+        std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
 
         try {
@@ -186,17 +186,22 @@ public:
         }
     }
 
-    static std::shared_ptr<Matrix> Reshape(Matrix& input_matrix, std::initializer_list > int > init_list) {
+    static std::shared_ptr<Matrix> Reshape(Matrix& input_matrix, std::initializer_list<int> init_list) {
+
+        int shape_product = 1;
+        for (int v : init_list) shape_product *= v;
+
         if (input_matrix.num_vals != shape_product) {
             Logger::Error("Output and input shapes do not match in function Matrix::Reshape()");
             return nullptr;
         }
+
         else {
-            std::vector<int> output_shape[init_list.size()];
+            std::vector<int> output_shape;
             std::copy(init_list.begin(), init_list.end(), output_shape);
             std::shared_ptr<Matrix> output_matrix = std::make_shared<Matrix>(output_shape);
 
-            output_matrix.matrix_values = input_matrix.matrix_values;
+            output_matrix->matrix_values = input_matrix.matrix_values;
 
             return output_matrix;
         }
@@ -297,7 +302,7 @@ public:
         mat->Map(relu_operator);
     }
 
-    static void Softmax(std::chared_ptr<Matrix> mat) {
+    static void Softmax(std::shared_ptr<Matrix> mat) {
         float exp_sum = 0;
         for (int val : mat->matrix_values) {
             exp_sum += exp(val);
@@ -335,7 +340,7 @@ public:
         return highest;
     }
 
-    static float Average(const Matrix& inp_mat) {
+    static float Average(Matrix& inp_mat) {
         float sum = inp_mat.Sum();
         return sum / inp_mat.num_vals;
     }

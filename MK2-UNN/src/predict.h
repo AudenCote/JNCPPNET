@@ -1,20 +1,21 @@
 #ifndef PREDICT_INCLUDE
 #define PREDICT_INCLUDE
 
-std::shared_ptr<Matrix> NeuralNetwork::Predict(const Matrix& input_array, const bool vectorize_inputs = true) {
-	std::vector<std::shared_ptr<Matrix>>& feed_forward_return_vector = feed_forward_all_template(Matrix & input_array, vectorize_inputs);
+std::shared_ptr<Matrix> NeuralNetwork::Predict(Matrix& input_array, bool vectorize_inputs = true) {
+	std::vector<std::shared_ptr<Matrix>>& feed_forward_return_vector = feed_forward_all_template(input_array, vectorize_inputs);
 	return feed_forward_return_vector[0];
 }
 
 
-std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs = true) {
+std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Matrix& input_array, bool vectorize_inputs = true) {
+	std::vector<int> inp_shape;
 	if (vectorize_inputs) {
-		std::vector<int> inp_shape = input_array.shape; inp_shape.push_back(1);
-		Matrix input_matrix = Matrix(inp_shape); input_matrix.matrix_values = input_array.matrix_values;
+		inp_shape = input_array.shape; inp_shape.push_back(1);
 	}
 	else {
-		Matrix& input_matrix = input_array;
+		inp_shape = input_array.shape;
 	}
+	Matrix input_matrix = Matrix(inp_shape); input_matrix.matrix_values = input_array.matrix_values;
 
 	int lrn_predict_idx = 0; // keeping track of how many times the next layer has been an lrn layer so that the dims (channels, width, height) 
 	//and the info (epsilon, radius, etc. ) can be accessed
@@ -45,7 +46,7 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(co
 	}
 	else if (inner_layers[0] == 4) {
 		std::shared_ptr<Matrix> last_hidden = CNV::convolution(input_matrix, conv_info_array[cnv_predict_idx][5], conv_info_array[cnv_predict_idx][0], conv_info_array[cnv_predict_idx][1],
-			weights[0], biases[0], conv_info_array[cnv_predict_idx][4], conv_info_array[cnv_predict_idx][2]);
+			*weights[0], *biases[0], conv_info_array[cnv_predict_idx][4], conv_info_array[cnv_predict_idx][2]);
 		cnv_predict_idx++;
 	}
 	else if (inner_layers[0] == 5) {
