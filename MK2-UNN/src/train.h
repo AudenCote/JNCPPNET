@@ -1,7 +1,7 @@
 #ifndef train_include
 #define train_include
 
-void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type = "mini-batch", int epochs, int batch_size, bool print = true) {
+void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type = "mini-batch", int epochs, int batch_size, float learning_rate, bool print = true) {
 	if (training_data.shape[0] != target_data.shape[0])
 		std::cout << "Different Sample Lengths" << std::endl;
 
@@ -65,20 +65,47 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 				//																	//
 				//==================================================================//
 
+				//                  ===== OUTPUT LAYER =====
+
 				if (output_layer_activation == "sigmoid" || output_layer_activation == "Sigmoid") {
-					loss = NeuralNetwork::mean_square_error(*targets, *outputs);
-					std::shared_ptr<Matrix> last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
-					Matrix::SigmoidPrime(outputs);
-					std::shared_ptr<Matrix> gradients = Matrix::ElementwiseMultiplication(*outputs, *last_errors);
-					gradients->Multiply(learning_rate);
-
-					std::shared_ptr<Matrix> hidden3_tr = Matrix::Transpose(hiddens[hiddens.size() - 1]);
-					std::shared_ptr<Matrix> weights_ho_deltas = Matrix::DotProduct(*gradients, *hidden3_tr);
-
-					sample_weights_deltas.push_back(weights_ho_deltas);
-					sample_bias_deltas.push_back(gradients);
+					loss = Matrix::mean_square_error(*targets, *outputs);
+				}
+				else if (output_layer_activation == "softmax" || output_layer_activation == "Softmax") {
+					loss = Matrix::categorical_cross_entropy(*targets, *outputs);
 				}
 
+				std::shared_ptr<Matrix> last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
+				Matrix::SigmoidPrime(outputs);
+				std::shared_ptr<Matrix> gradients = Matrix::ElementwiseMultiplication(*outputs, *last_errors);
+				gradients->Multiply(learning_rate);
+
+				std::shared_ptr<Matrix> hidden3_tr = Matrix::Transpose(hiddens[hiddens.size() - 1]);
+				std::shared_ptr<Matrix> weights_ho_deltas = Matrix::DotProduct(*gradients, *hidden3_tr);
+
+				sample_weights_deltas.push_back(weights_ho_deltas);
+				sample_bias_deltas.push_back(gradients);
+
+				//					 ===== INNER LAYERS =====
+
+				int weights_backprop_idx = weights.size() - 1;
+				int fc_activation_idx = fully_connected_activations.size() - 1;
+				int hiddens_idx = hiddens.size() - 1;
+
+				for (int l = inner_layers.size() - 1; l >= 0; l--) {
+
+					if (inner_layers[l] == 0) {
+
+						fully_connected::backprop(last_errors, weights[weights_backprop_idx], hiddens[hiddens_idx], learning_rate, fully_connected_activations[fc_activation_idx]);
+
+						weights_backprop_idx -= 1;
+						fc_activation_idx -= 1;
+						hiddens_idx -= 1;
+
+					}
+
+
+
+				}
 
 
 
