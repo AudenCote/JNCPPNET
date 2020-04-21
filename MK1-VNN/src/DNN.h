@@ -1,4 +1,4 @@
-class NeuralNetwork {
+	class NeuralNetwork {
 private:
 	float learning_rate = .1f;
 

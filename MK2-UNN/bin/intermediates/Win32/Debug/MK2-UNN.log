@@ -1,39 +1,32 @@
 ﻿  main.cpp
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(120,31): warning C4018: '<': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(126,34): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(131,31): warning C4018: '<': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(307,42): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(308,1): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(14,107): error C2059: syntax error: '='
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(14,110): error C2238: unexpected token(s) preceding ';'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(83,27): error C4596: 'Train': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(83): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 4
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(83): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 5
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(124,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(130,34): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(135,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(330,42): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(331,1): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82,27): error C4596: 'Train': illegal qualified name in member declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 4
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 5
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 6
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,1): error C2628: 'NeuralNetwork' followed by 'int' is illegal (did you forget a ';'?)
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,66): error C2556: 'NeuralNetwork NeuralNetwork::get_norm_layer_outputs(const int)': overloaded function differs only by return type from 'int NeuralNetwork::get_norm_layer_outputs(const int)'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(51): message : see declaration of 'NeuralNetwork::get_norm_layer_outputs'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(50): message : see declaration of 'NeuralNetwork::get_norm_layer_outputs'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,20): error C2371: 'NeuralNetwork::get_norm_layer_outputs': redefinition; different basic types
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(51): message : see declaration of 'NeuralNetwork::get_norm_layer_outputs'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(157,5): error C2065: 'lrn_intra_idx': undeclared identifier
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(23,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(30,78): error C2572: 'NeuralNetwork::FullyConnected': redefinition of default argument: parameter 1
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(69): message : see declaration of 'NeuralNetwork::FullyConnected'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(36,167): error C2572: 'NeuralNetwork::Convolutional': redefinition of default argument: parameter 2
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(71): message : see declaration of 'NeuralNetwork::Convolutional'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(36,195): error C2572: 'NeuralNetwork::Convolutional': redefinition of default argument: parameter 3
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(71): message : see declaration of 'NeuralNetwork::Convolutional'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(37,27): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(48,26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(71,2): error C2143: syntax error: missing ';' before '}'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(10,99): error C2664: 'std::shared_ptr<Matrix> Matrix::DotProduct(Matrix &,Matrix &)': cannot convert argument 1 from 'const Matrix' to 'Matrix &'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(10,84): message : Conversion loses qualifiers
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(235,36): message : see declaration of 'Matrix::DotProduct'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(29,10): error C2065: 'output': undeclared identifier
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(50): message : see declaration of 'NeuralNetwork::get_norm_layer_outputs'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(16,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(23,78): error C2572: 'NeuralNetwork::FullyConnected': redefinition of default argument: parameter 1
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(68): message : see declaration of 'NeuralNetwork::FullyConnected'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(29,167): error C2572: 'NeuralNetwork::Convolutional': redefinition of default argument: parameter 2
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(70): message : see declaration of 'NeuralNetwork::Convolutional'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(29,195): error C2572: 'NeuralNetwork::Convolutional': redefinition of default argument: parameter 3
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(70): message : see declaration of 'NeuralNetwork::Convolutional'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(30,27): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(42,26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(59,25): warning C4018: '<': signed/unsigned mismatch
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(66,109): error C3867: 'Matrix::GetChunk': non-standard syntax; use '&' to create a pointer to member
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(66,109): error C2109: subscript requires array or pointer type
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(98,10): error C3861: 'genpool': identifier not found
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(102,10): error C3861: 'genpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(106,10): error C3861: 'genpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(110,10): error C3861: 'genpool': identifier not found
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(42,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(64,31): error C2677: binary '/': no global operator found which takes type 'std::vector<int,std::allocator<int>>' (or there is no acceptable conversion)
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(65,19): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
@@ -45,23 +38,11 @@ C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(75,20): error C2039: 'Add': is
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(16): message : see declaration of 'std::shared_ptr<Matrix>'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(82,10): error C2065: 'output_batch': undeclared identifier
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(4,93): error C2572: 'NeuralNetwork::Predict': redefinition of default argument: parameter 1
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(81): message : see declaration of 'NeuralNetwork::Predict'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(80): message : see declaration of 'NeuralNetwork::Predict'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(5,125): error C2440: 'initializing': cannot convert from 'std::vector<std::shared_ptr<Matrix>,std::allocator<std::shared_ptr<Matrix>>>' to 'std::vector<std::shared_ptr<Matrix>,std::allocator<std::shared_ptr<Matrix>>> &'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(5,67): message : A non-const reference may only be bound to an lvalue
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(10,124): error C2572: 'NeuralNetwork::feed_forward_all_template': redefinition of default argument: parameter 1
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(53): message : see declaration of 'NeuralNetwork::feed_forward_all_template'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(29,152): error C2664: 'std::shared_ptr<Matrix> fully_connected::feed_forward(const Matrix &,const Matrix &,const Matrix &,const char *)': cannot convert argument 2 from '_Ty' to 'const Matrix &'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(29,152): message : Reason: cannot convert from '_Ty' to 'const Matrix'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(29,94): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(8,26): message : see declaration of 'fully_connected::feed_forward'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(52): message : see declaration of 'NeuralNetwork::feed_forward_all_template'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(45,53): error C2440: 'initializing': cannot convert from 'Matrix' to 'std::shared_ptr<Matrix>'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(45,39): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(53,181): error C2664: 'std::shared_ptr<Matrix> CNV::maxpool(Matrix &,const int,const int,const int,const int,const int)': cannot convert argument 2 from '_Ty' to 'const int'
@@ -70,86 +51,41 @@ C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(53,181): error C2664: 'std
               _Ty=std::vector<int,std::allocator<int>>
           ]
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(53,88): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(97,26): message : see declaration of 'CNV::maxpool'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(57,34): error C2065: 'last_hidden': undeclared identifier
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(105,26): message : see declaration of 'CNV::maxpool'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(57,51): error C2065: 'last_hidden': undeclared identifier
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(58,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(60,176): error C2664: 'std::shared_ptr<Matrix> fully_connected::feed_forward(const Matrix &,const Matrix &,const Matrix &,const char *)': cannot convert argument 2 from '_Ty' to 'const Matrix &'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(60,176): message : Reason: cannot convert from '_Ty' to 'const Matrix'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(60,114): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(8,26): message : see declaration of 'fully_connected::feed_forward'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(76,69): error C2440: 'initializing': cannot convert from '_Ty' to 'std::shared_ptr<Matrix>'
-          with
-          [
-              _Ty=Matrix
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(76,40): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(79,47): error C2664: 'std::shared_ptr<Matrix> CNV::convolution(Matrix &,const int,const int,const int,Matrix &,Matrix &,const int,const int)': cannot convert argument 5 from '_Ty' to 'Matrix &'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(79,47): error C2660: 'CNV::convolution': function does not take 8 arguments
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(7,26): message : see declaration of 'CNV::convolution'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(84,197): error C2664: 'std::shared_ptr<Matrix> CNV::maxpool(Matrix &,const int,const int,const int,const int,const int)': cannot convert argument 2 from '_Ty' to 'const int'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(84,198): error C2664: 'std::shared_ptr<Matrix> CNV::maxpool(Matrix &,const int,const int,const int,const int,const int)': cannot convert argument 2 from '_Ty' to 'const int'
           with
           [
               _Ty=std::vector<int,std::allocator<int>>
           ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(84,104): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(97,26): message : see declaration of 'CNV::maxpool'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(84,105): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(105,26): message : see declaration of 'CNV::maxpool'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(88,21): error C2065: 'last_hidden': undeclared identifier
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(92,195): error C2664: 'std::shared_ptr<Matrix> fully_connected::feed_forward(const Matrix &,const Matrix &,const Matrix &,const char *)': cannot convert argument 2 from '_Ty' to 'const Matrix &'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(92,195): message : Reason: cannot convert from '_Ty' to 'const Matrix'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(92,121): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(8,26): message : see declaration of 'fully_connected::feed_forward'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(108,63): error C2440: 'initializing': cannot convert from '_Ty' to 'std::shared_ptr<Matrix>'
-          with
-          [
-              _Ty=Matrix
-          ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(108,34): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(111,41): error C2664: 'std::shared_ptr<Matrix> CNV::convolution(Matrix &,const int,const int,const int,Matrix &,Matrix &,const int,const int)': cannot convert argument 5 from '_Ty' to 'Matrix &'
-          with
-          [
-              _Ty=std::shared_ptr<Matrix>
-          ]
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(111,41): error C2660: 'CNV::convolution': function does not take 8 arguments
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(7,26): message : see declaration of 'CNV::convolution'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(116,191): error C2664: 'std::shared_ptr<Matrix> CNV::maxpool(Matrix &,const int,const int,const int,const int,const int)': cannot convert argument 2 from '_Ty' to 'const int'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(116,192): error C2664: 'std::shared_ptr<Matrix> CNV::maxpool(Matrix &,const int,const int,const int,const int,const int)': cannot convert argument 2 from '_Ty' to 'const int'
           with
           [
               _Ty=std::vector<int,std::allocator<int>>
           ]
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(116,98): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(97,26): message : see declaration of 'CNV::maxpool'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(116,99): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(105,26): message : see declaration of 'CNV::maxpool'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(120,89): error C2131: expression did not evaluate to a constant
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(120,69): message : failure was caused by call of undefined function or one not declared 'constexpr'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(120,69): message : see usage of 'std::vector<Matrix,std::allocator<Matrix>>::size'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(120,69): message : see usage of 'std::vector<std::shared_ptr<Matrix>,std::allocator<std::shared_ptr<Matrix>>>::size'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(120,110): error C2065: 'output': undeclared identifier
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(121,2): error C2146: syntax error: missing ';' before identifier 'return_vector'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(121,61): error C2065: 'hidden': undeclared identifier
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4,107): error C2572: 'NeuralNetwork::Train': redefinition of default argument: parameter 1
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(83): message : see declaration of 'NeuralNetwork::Train'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4,162): error C2572: 'NeuralNetwork::Train': redefinition of default argument: parameter 4
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(83): message : see declaration of 'NeuralNetwork::Train'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): message : see declaration of 'NeuralNetwork::Train'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4,183): error C2572: 'NeuralNetwork::Train': redefinition of default argument: parameter 5
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): message : see declaration of 'NeuralNetwork::Train'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 4
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 5
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'NeuralNetwork::Train': missing default argument for parameter 6
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(58,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(116,95): error C2660: 'NeuralNetwork::feed_forward_all_template': function does not take 0 arguments
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(143,95): error C2660: 'NeuralNetwork::feed_forward_all_template': function does not take 0 arguments
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(10,53): message : see declaration of 'NeuralNetwork::feed_forward_all_template'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(116,67): error C2530: 'feed_forward_return_vector': references must be initialized
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(121,1): error C2143: syntax error: missing ';' before '}'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(143,67): error C2530: 'feed_forward_return_vector': references must be initialized
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(148,1): error C2143: syntax error: missing ';' before '}'

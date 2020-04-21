@@ -11,7 +11,7 @@ private:
 	int output_nodes;
 
 	//does this idx system work if only updating whenever a new layer of that type is added in handle_trainables? 
-	int fcl_idx = 0; int cnv_idx = 0; int mxp_idx = 0; int bnt_idx = 0; int lrn_inter_idx = 0; lrn_intra_idx = 0;
+	int fcl_idx = 0; int cnv_idx = 0; int mxp_idx = 0; int bnt_idx = 0; int lrn_inter_idx = 0; int lrn_intra_idx = 0;
 
 	//note - helpful to have all of these separated for debug/dev purposes, maybe make master std::vector later
 	std::vector<int> fully_connected_nodes_array;
@@ -24,6 +24,7 @@ private:
 	std::vector<std::vector<float>> BNT_info;
 	std::vector<const char*> fully_connected_activations;
 	std::string output_layer_activation;
+	std::vector<const char*> conv_activations;
 
 	std::vector<int> inner_layers = {};
 	//input layer -> -1
@@ -43,8 +44,6 @@ private:
 
 	std::vector<std::shared_ptr<Matrix>> used_weight_values;
 	std::vector<std::shared_ptr<Matrix>> used_bias_values;
-
-	float mean_square_error(Matrix targets, Matrix output);
 
 	void handle_trainables(const int layer_index, const int prev_i, const int i);
 
@@ -66,13 +65,13 @@ public:
 
 	void InitializeParameters();
 
-	void FullyConnected(int nodes, const char* activation = "sigmoid");
+	void FullyConnected(int nodes, const char* activation);
 
-	void Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0, const char* activation = "relu");
+	void Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0, const char* activation);
 
 	void MaxPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride);
 
-	void AvgPool(const int filter_size, const int stride);
+	void AvgPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride);
 
 	void LocalResponseNormalization(const char* type, const int channels, const int width, const int height, const float epsilon, const float alpha, const float beta, const float radius);
 
@@ -80,7 +79,7 @@ public:
 
 	std::shared_ptr<Matrix> Predict(Matrix& input_array, bool vectorize_inputs = true);
 
-	void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type = "mini-batch", int epochs, int batch_size, bool print = true);
+	void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type, int epochs, int batch_size, float learning_rate, bool print);
 
 }
 

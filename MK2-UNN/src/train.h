@@ -68,10 +68,10 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 				//                  ===== OUTPUT LAYER =====
 
 				if (output_layer_activation == "sigmoid" || output_layer_activation == "Sigmoid") {
-					loss = Matrix::mean_square_error(*targets, *outputs);
+					loss = Matrix::MeanSquareError(*targets, *outputs);
 				}
 				else if (output_layer_activation == "softmax" || output_layer_activation == "Softmax") {
-					loss = Matrix::categorical_cross_entropy(*targets, *outputs);
+					loss = Matrix::CategoricalCrossEntropy(*targets, *outputs);
 				}
 
 				std::shared_ptr<Matrix> last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
@@ -92,14 +92,14 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 				int hiddens_idx = hiddens.size() - 1;
 
 				for (int l = inner_layers.size() - 1; l >= 0; l--) {
-
 					if (inner_layers[l] == 0) {
-
-						fully_connected::backprop(last_errors, weights[weights_backprop_idx], hiddens[hiddens_idx], learning_rate, fully_connected_activations[fc_activation_idx]);
-
-						weights_backprop_idx -= 1;
-						fc_activation_idx -= 1;
-						hiddens_idx -= 1;
+						std::vector<std::shared_ptr<Matrix>> delt_grad_vec = fully_connected::backprop(last_errors, weights[weights_backprop_idx], 
+																												 hiddens[hiddens_idx], hiddens[hiddens_idx - 1], 
+																												 learning_rate, fully_connected_activations[fc_activation_idx]);
+						sample_weights_deltas.push_back(delt_grad_vec[0]); sample_bias_deltas.push_back(delt_grad_vec[1]);
+						weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
+					}
+					else if (inner_layers[l] == 4) {
 
 					}
 

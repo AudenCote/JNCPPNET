@@ -1,13 +1,6 @@
 #ifndef METHODS
 #define METHODS
 
-float NeuralNetwork::mean_square_error(Matrix targets, Matrix output) {
-	std::shared_ptr<Matrix> error = Matrix::ElementwiseSubtraction(targets, output);
-	error->Square();
-	float sum = error->Sum();
-	return sum / targets.num_vals;
-}
-
 void NeuralNetwork::InputLayer(const int in_nodes) {
 	input_nodes = in_nodes;
 }
@@ -37,6 +30,7 @@ void NeuralNetwork::Convolutional(const int image_width, const int image_height,
 	int num_conv_output_vals = filters * pow((int)((image_width - filter_size) / stride) + 1, 2);
 	conv_nodes_array.push_back(num_conv_output_vals);
 	std::vector<int> conv_info = { image_width, image_height, filter_size, filters, stride, channels };
+	conv_activations.push_back(activation);
 	conv_info_array.push_back(conv_info);
 	inner_layers.push_back(4);
 	if (image_channels == 0 && channels != 0) {
@@ -50,6 +44,10 @@ void NeuralNetwork::MaxPool(const int channels, const int image_width, const int
 	std::vector<int> maxpool_info = { filter_size, stride, channels, image_width, image_height };
 	maxpool_info_array.push_back(maxpool_info);
 	inner_layers.push_back(5);
+}
+
+void NeuralNetwork::AvgPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride) {
+
 }
 
 void NeuralNetwork::LocalResponseNormalization(const char* type, const int channels, const int width, const int height, const float epsilon, const float alpha, const float beta, const float radius) {
@@ -67,7 +65,7 @@ void NeuralNetwork::LocalResponseNormalization(const char* type, const int chann
 		std::vector<float> inp_vec = { epsilon, alpha, beta, radius }; LRN_info.push_back(inp_vec);
 	}
 	catch (const std::invalid_argument& e) {
-		Logger::Error(e.what())
+		Logger::Error(e.what());
 	}
 }
 

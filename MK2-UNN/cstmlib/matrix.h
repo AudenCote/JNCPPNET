@@ -47,9 +47,51 @@ private:
         return x;
     }
 
+    static float categorical_cross_entropy_operator(float o, float t) {
+        return -o * log(t); //log function is natural, log10() is common
+    }
+
     void init_zeroes() {
         for (int i = 0; i < num_vals; ++i) {
             matrix_values.push_back(0.0f);
+        }
+    }
+
+    void set_chunk_template(const std::initializer_list<int> init_list, std::vector<float>& vector_to_insert) {
+        std::vector<int> I;
+        std::copy(init_list.begin(), init_list.end(), I);
+
+        try {
+            for (int d = 0; d < dims; ++d)
+                if (I[d] >= shape[d] || I[d] < 0)
+                    //std::cout << d << " " << I[d] << " " << shape[d] << std::endl;
+                    throw std::invalid_argument("Invalid Indexing Code 0 in function SetChunk");
+
+            int start_idx = 0;
+            for (int i = 0; i < init_list.size(); ++i) {
+                int mult_dims = 1;
+                mult_dims *= I[i];
+                for (int j = i + 1; j < dims; ++j) {
+                    mult_dims *= shape[j];
+                }
+                start_idx += mult_dims;
+            }
+
+            if (start_idx + vector_to_insert.size() > num_vals) {
+                throw std::invalid_argument("Invalid Indexing Code 1 in function SetChunk");
+            }
+
+            for (int i = start_idx; i < vector_to_insert.size() + start_idx; i++) {
+                matrix_values[i] = vector_to_insert[i - start_idx];
+            }
+
+
+        }
+        catch (const std::invalid_argument& e) {
+            Logger::Error(e.what());
+        }
+        catch (const std::logic_error& e) {
+            Logger::Error(e.what());
         }
     }
 
@@ -161,7 +203,7 @@ public:
 
     }
 
-    void Set(const std::initializer_list<int> init_list, float val) {
+    void SetVal(const std::initializer_list<int> init_list, float val) {
 
         std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
@@ -184,6 +226,14 @@ public:
         catch (const std::invalid_argument& e) {
             Logger::Error(e.what());
         }
+    }
+
+    void SetChunk(const std::initializer_list<int> init_list, std::vector<float>& vector_to_insert) {
+        set_chunk_template(init_list, vector_to_insert);
+    }
+
+    void SetChunk(const std::initializer_list<int> init_list, Matrix& matrix_to_insert) {
+        set_chunk_template(init_list, matrix_to_insert.matrix_values);
     }
 
     static std::shared_ptr<Matrix> Reshape(Matrix& input_matrix, std::initializer_list<int> init_list) {
@@ -290,6 +340,25 @@ public:
             matrix_values[i] = func(matrix_values[i]);
     }
 
+    static std::shared_ptr<Matrix> DoubleMap(Matrix& m1, Matrix& m2, float (*func)(float, float)) {
+        try {
+            if (m1.num_vals != m2.num_vals) {
+                throw(std::invalid_argument("Matrix shapes do not match -- Exception thrown in function Matrix::DoubleMap()"));
+            }
+            else {
+                std::shared_ptr<Matrix> return_mat = std::make_shared<Matrix>(m1.shape);
+
+                for (int i = 0; i < m1.num_vals; i++)
+                    return_mat->matrix_values[i] = func(m1.matrix_values[i], m2.matrix_values[i]);
+            }
+
+        }
+        catch(std::invalid_argument e){
+            Logger::Error(e.what());
+            return nullptr;
+        }
+    }
+
     static void Sigmoid(std::shared_ptr<Matrix> mat) {
         mat->Map(sigmoid_operator);
     }
@@ -310,6 +379,18 @@ public:
         for (int i = 0; i < mat->num_vals; i++) {
             mat->matrix_values[i] = exp(mat->matrix_values[i]) / exp_sum;
         }
+    }
+
+    static float MeanSquareError(Matrix& targets, Matrix& outputs) {
+        std::shared_ptr<Matrix> error = Matrix::ElementwiseSubtraction(targets, outputs);
+        error->Square();
+        float sum = error->Sum();
+        return sum / targets.num_vals;
+    }
+
+    static float CategoricalCrossEntropy(Matrix& targets, Matrix& outputs) {
+        std::shared_ptr<Matrix> cce_mat = DoubleMap(targets, outputs, categorical_cross_entropy_operator);
+        return cce_mat->Sum();
     }
 
     static std::shared_ptr<Matrix> Transpose(std::shared_ptr<Matrix> mat) {
