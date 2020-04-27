@@ -425,6 +425,79 @@ public:
         float sum = inp_mat.Sum();
         return sum / inp_mat.num_vals;
     }
+
+    static std::vector<int> NanArgmax(Matrix& inp_mat) {
+        float greatest_val = 0;
+        int nanargmax;
+        for (int i = 0; i < inp_mat.num_vals; i++) {  
+            greatest_val = (inp_mat.matrix_values[i] > greatest_val) ? inp_mat.matrix_values[i] : greatest_val;
+            nanargmax = (inp_mat.matrix_values[i] > greatest_val) ? i : nanargmax;
+        }
+
+        std::vector<int> nanargmax_unraveled = UnravelIndex(nanargmax, inp_mat.shape);
+
+        return nanargmax_unraveled;
+    }
+
+    static std::vector<int> UnravelIndex(int index, std::vector<int>& dimensions, int iteration = 0, std::vector<int> original_dimensions = {}, std::vector<int> working_answer = {}) {
+        try {
+            int dim_product = 1;
+            for (int v : dimensions) {
+                dim_product *= v;
+            }
+
+            if (index > dim_product) {
+                throw std::logic_error("Index does not fit in tensor of input dimensions - error thrown in function Matrix::UnravelIndex");
+            }
+
+            int n_vals = 0;
+            for (int val : dimensions) { n_vals *= val; }
+
+            if (iteration == 0) {
+                original_dimensions = dimensions;
+            }
+            iteration = iteration + 1;
+
+            if (dimensions.size() == 1) {
+                working_answer.push_back(n_vals);
+                for (int i = working_answer.size(); i < original_dimensions.size(); i++) {
+                    working_answer.push_back(0);
+                }
+                return working_answer;
+            }
+            else if (dimensions.size() > 1) {
+
+                if (index < n_vals / 2) {
+                    std::vector<int> new_dims;
+                    for (int i = 0; i < dimensions.size() / 2; i++) { new_dims.push_back(dimensions[i]); }
+                    UnravelIndex(index, new_dims, iteration, original_dimensions, working_answer);
+                }
+                else if (index > n_vals / 2) {
+                    //can't just keep going pushing back into working answer, need to go by indices using original_dimensions vector
+                    std::vector<int> new_dims;
+                    for (int i = dimensions.size() / 2; i < dimensions.size(); i++) {
+                        new_dims.push_back(dimensions[i]);
+                    }
+                    /*for the first half of original_dimensions{
+                        working_answer.push_back(value in those indices);
+                    }*/
+                    index = index - n_vals / 2; //this could be a source of error
+                    UnravelIndex(index, new_dims, iteration, original_dimensions, working_answer);
+                }
+
+            }
+            
+
+           
+
+            
+
+
+        }
+        catch(std::logic_error e){
+            Logger::Error(e.what());
+        }
+    }
 };
 
 #endif

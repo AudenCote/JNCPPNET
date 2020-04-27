@@ -233,6 +233,7 @@ namespace CNV {
 
 
 
+
 					curr_x += pool_s;
 					out_x += 1;
 				}
