@@ -150,7 +150,7 @@ public:
         }
     }
 
-    std::shared_ptr<Matrix> GetChunk(std::initializer_list<int> init_list) {
+    std::shared_ptr<Matrix> GetChunk(std::initializer_list<int>& init_list) {
 
         std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
@@ -200,7 +200,79 @@ public:
             Logger::Error(e.what());
             return nullptr;
         }
+    }
 
+    std::shared_ptr<Matrix> GetChunk(my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>>& init_list) {
+
+        //in each input vector is a series of numbers alternating start and end vales for each chunk in each dim, each dim being an input vector (listed in THE input vector, init_list)
+
+
+        try {
+            //GETTING CHUNK
+
+            for (int i = 0; i < init_list.size(); i++) {
+                if (init_list[i].size() > 2 || init_list[i].size() < 1) {
+                    throw std::invalid_argument("Invalid input chunk dimensions - make sure the number of values in each dimension is at least one and no more than two - the start and stop values in each dimension, or the single value in each dimension. See docs for more info. Exception thrown in function Matrix::GetChunk()");
+                }
+            }
+
+            std::vector<int> output_matrix_shape;
+            std::vector<float> output_matrix_values;
+
+            for (int i = 0; i < init_list.size(); i++) {
+                if (init_list[i].size() == 1) {
+                    output_matrix_shape.push_back(1);
+                }
+                else {
+                    output_matrix_shape.push_back(abs(init_list[i][init_list[i].size() - 1] - init_list[i][0]));
+                }
+            }
+
+            for (int n = 0; n < num_vals; ++n) {
+                int num_matching_starting_bounds = 0;
+                int num_matching_ending_bounds = 0;
+
+                std::vector<int> unraveled = UnravelIndex(n, shape);
+
+                for (int d = 0; d < dims; ++d) {
+                    std::vector<int> starting_values;
+                    std::vector<int> ending_values;
+
+                    for (int c = 0; c < init_list[d].size(); c++) {
+                        if (c % 2 == 0) {
+                            starting_values.push_back(init_list[d][c]);
+                        }
+                        else {
+                            ending_values.push_back(init_list[d][c]);
+                        }
+                    }
+
+                    for (int v : starting_values) {
+                        if (unraveled[d] >= v) {
+                            num_matching_starting_bounds += 1;
+                            break;
+                        }
+                    }
+                    for (int v : ending_values) {
+                        if (unraveled[d] < v) {
+                            num_matching_ending_bounds += 1;
+                            break;
+                        }
+                    }
+                }
+
+                if (num_matching_starting_bounds + num_matching_ending_bounds == dims*2) {
+                    output_matrix_values.push_back(matrix_values[n]);
+                }
+            }
+
+            std::shared_ptr<Matrix> output_matrix = std::make_shared<Matrix>(output_matrix_shape);
+            output_matrix->matrix_values = output_matrix_values;
+            return output_matrix;
+        }
+        catch(std::invalid_argument e){
+            Logger::Error(e.what());
+        }
     }
 
     void SetVal(const std::initializer_list<int> init_list, float val) {
@@ -316,16 +388,16 @@ public:
     }
 
     static std::shared_ptr<Matrix> ElementwiseAddition(Matrix& mat1, Matrix& mat2) {
-        return elementwise_operation(mat1, mat2, plus);
+        return elementwise_operation(mat1, mat2, my_misc_utils::plus);
     }
     static std::shared_ptr<Matrix> ElementwiseSubtraction(Matrix& mat1, Matrix& mat2) {
-        return elementwise_operation(mat1, mat2, minus);
+        return elementwise_operation(mat1, mat2, my_misc_utils::minus);
     }
     static std::shared_ptr<Matrix> ElementwiseMultiplication(Matrix& mat1, Matrix& mat2) {
-        return elementwise_operation(mat1, mat2, times);
+        return elementwise_operation(mat1, mat2, my_misc_utils::times);
     }
     static std::shared_ptr<Matrix> ElementwiseDivision(Matrix& mat1, Matrix& mat2) {
-        return elementwise_operation(mat1, mat2, dividedby);
+        return elementwise_operation(mat1, mat2, my_misc_utils::dividedby);
     }
 
     float Sum() {

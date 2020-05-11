@@ -221,25 +221,53 @@ namespace CNV {
 		}
 	}
 
-	std::shared_ptr<Matrix> pool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
+	//See issues on github for what to do next. Erase this comment once you've done it.
 
-		std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
+	std::shared_ptr<Matrix> maxpool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
 
-		for (int c = 0; c < conv_in.shape[0]; c++) { 
-			int curr_y = 0; int out_y = 0;
-			while (curr_y + pool_f < conv_in.shape[1]) {
-				int curr_x = 0; int out_x = 0;
-				while (curr_x + pool_f < conv_in.shape[2]) {
+		try {
 
+			std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
 
+			for (int c = 0; c < conv_in.shape[0]; c++) {
+				int curr_y = 0; int out_y = 0;
+				while (curr_y + pool_f < conv_in.shape[1]) {
+					int curr_x = 0; int out_x = 0;
+					while (curr_x + pool_f < conv_in.shape[2]) {
 
+						std::vector<int> conv_in_sec_shape = { conv_in.shape[0], pool_f, pool_f }; Matrix conv_in_sec = Matrix(conv_in_sec_shape);
+						std::vector<float> cimat_vals = {};
+						for (int c = 0; c < conv_in.shape[0]; c++) {
+							for (int r = curr_y; r < curr_y + pool_f; r++) {
+								for (int v = curr_x; v < curr_x + pool_f; v++) {
+									cimat_vals.push_back(conv_in.GetVal({ c, v, r }));
+								}
+							}
+						}
 
-					curr_x += pool_s;
-					out_x += 1;
+						if (conv_in_sec.num_vals != cimat_vals.size()) {
+							throw(std::length_error("Image section matrix shapes do not match properly"));
+						}
+
+						conv_in_sec.matrix_values = cimat_vals;
+
+						std::vector<int> nanargmax_unraveled = Matrix::NanArgmax(conv_in_sec);
+
+						dout->SetVal({ c, curr_y + nanargmax_unraveled[0], curr_x + nanargmax_unraveled[1] }, dpool.GetVal({ c, out_y, out_x }));
+
+						curr_x += pool_s;
+						out_x += 1;
+					}
+					curr_y += pool_s;
+					out_y += 1;
 				}
-				curr_y += pool_s;
-				out_y += 1;
 			}
+
+			return dout;
+		}
+		catch (std::length_error e) {
+			Logger::Error(e.what());
+			return nullptr;
 		}
 
 
