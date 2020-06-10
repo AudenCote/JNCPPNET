@@ -35,8 +35,6 @@ namespace my_misc_utils {
         }
     };
 
-    // a function, with the short name _ (underscore) for creating 
-    // the _init_list_with_square_brackets out of a "regular" std::initializer_list
     template<class T>
     better_initializer_list<T> make_useful(const std::initializer_list<T>& list) {
         return better_initializer_list<T>(list);

@@ -235,7 +235,10 @@ namespace CNV {
 					int curr_x = 0; int out_x = 0;
 					while (curr_x + pool_f < conv_in.shape[2]) {
 
-						std::vector<int> conv_in_sec_shape = { conv_in.shape[0], pool_f, pool_f }; Matrix conv_in_sec = Matrix(conv_in_sec_shape);
+						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({ my_misc_utils::make_useful({0}) });
+						std::shared_ptr<Matrix> conv_in_sec = conv_in.GetChunk(args);
+
+						/*std::vector<int> conv_in_sec_shape = { conv_in.shape[0], pool_f, pool_f }; Matrix conv_in_sec = Matrix(conv_in_sec_shape);
 						std::vector<float> cimat_vals = {};
 						for (int c = 0; c < conv_in.shape[0]; c++) {
 							for (int r = curr_y; r < curr_y + pool_f; r++) {
@@ -247,11 +250,9 @@ namespace CNV {
 
 						if (conv_in_sec.num_vals != cimat_vals.size()) {
 							throw(std::length_error("Image section matrix shapes do not match properly"));
-						}
+						}*/
 
-						conv_in_sec.matrix_values = cimat_vals;
-
-						std::vector<int> nanargmax_unraveled = Matrix::NanArgmax(conv_in_sec);
+						std::vector<int> nanargmax_unraveled = Matrix::NanArgmax(*conv_in_sec);
 
 						dout->SetVal({ c, curr_y + nanargmax_unraveled[0], curr_x + nanargmax_unraveled[1] }, dpool.GetVal({ c, out_y, out_x }));
 
