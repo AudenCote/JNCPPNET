@@ -27,9 +27,9 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 	}
 
 	std::vector<double> losses;
-	for (int e = 0; e < epochs; ++e) {
+	for (int e = 0; e < epochs; e++) {
 
-		for (int b = 0; b < input_batches.shape[0]; ++b) {
+		for (int b = 0; b < input_batches.shape[0]; b++) {
 
 			std::shared_ptr<Matrix> input_batch = input_batches.GetChunk({ b });
 			std::shared_ptr<Matrix> target_batch = target_batches.GetChunk({ b });
@@ -39,7 +39,7 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 
 			double loss;
 
-			for (int p = 0; p < batch_size; ++p) {
+			for (int p = 0; p < batch_size; p++) {
 				std::vector<std::shared_ptr<Matrix>> sample_weights_deltas; std::vector<std::shared_ptr<Matrix>> sample_bias_deltas;
 
 				//==================================================================//

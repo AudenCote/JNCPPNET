@@ -240,6 +240,12 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			//max-pooling layers use no trainable parameters, but still need to increment the count to access layer information when iterating through other layers
 			mxp_idx += 1;
 		}
+		else if (i == 6) {
+			avgp_idx += 1;
+		}
+		else if (i == 7) {
+		globavgp_idx += 1;
+		}
 	}
 	catch (const std::logic_error& e) {
 		Logger::Error(e.what());

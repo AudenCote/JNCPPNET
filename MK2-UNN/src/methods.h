@@ -47,7 +47,16 @@ void NeuralNetwork::MaxPool(const int channels, const int image_width, const int
 }
 
 void NeuralNetwork::AvgPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride) {
+	int avgpool_output_vals = image_channels * pow((int)((image_width - filter_size) / stride) + 1, 2);
+	avgpool_nodes_array.push_back(avgpool_output_vals);
+	std::vector<int> avgpool_info = { filter_size, stride, channels, image_width, image_height };
+	avgpool_info_array.push_back(avgpool_info);
+	inner_layers.push_back(6);
+}
 
+void NeuralNetwork::GlobAvgPool(const int channels) {
+	globavgpool_channels_array.push_back(channels);
+	inner_layers.push_back(7);
 }
 
 void NeuralNetwork::LocalResponseNormalization(const char* type, const int channels, const int width, const int height, const float epsilon, const float alpha, const float beta, const float radius) {

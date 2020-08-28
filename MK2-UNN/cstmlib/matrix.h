@@ -352,7 +352,7 @@ public:
     void Square() {
         for (int i = 0; i < num_vals; i++)
             matrix_values[i] = matrix_values[i] * matrix_values[i];
-    }
+    
 
     static std::shared_ptr<Matrix> DotProduct(Matrix& mat1, Matrix& mat2) {
 

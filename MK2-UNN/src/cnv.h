@@ -47,27 +47,22 @@ namespace CNV {
 				while (curr_y + filt.shape[3] <= image.shape[2]) {
 					int curr_x = 0; int out_x = 0;
 					while (curr_x + filt.shape[2] <= image.shape[1]) {
-						std::vector<int> image_section_shape = { image.shape[0], filt.shape[2], filt.shape[3] }; Matrix image_section = Matrix(image_section_shape);
-						std::vector<float> ismat_vals = {};
-						for (int c = 0; c < image.shape[0]; c++) {
-							for (int r = curr_y; r < curr_y + filt.shape[3]; r++) {
-								for (int v = curr_x; v < curr_x + filt.shape[2]; v++) {
-									ismat_vals.push_back(image.GetVal({ c, v, r }));
-								}
-							}
-						}
 
-						if (image_section.num_vals != ismat_vals.size()) {
-							throw(std::length_error("Image section matrix shapes do not match properly\nException thrown in function: LRN::inter_channel()"));
-						}
+						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({
+							my_misc_utils::make_useful({ 0, image.shape[0]}),
+							my_misc_utils::make_useful({ curr_y, filt.shape[2]}),
+							my_misc_utils::make_useful({ curr_x, curr_x + filt.shape[3]})
+							});
+
+						std::shared_ptr<Matrix> image_section = image.GetChunk(args);
+
 						for (int i = 0; i < filt.GetChunk({ f })->shape.size(); i++) {
-							if (filt.GetChunk({ f })->shape[i] != image_section.shape[i]) {
+							if (filt.GetChunk({ f })->shape[i] != image_section->shape[i]) {
 								throw(std::length_error("Image section matrix shape does not match filter shape\nException thrown in function: LRN::inter_channel()"));
 							}
 						}
 
-						image_section.matrix_values = ismat_vals;
-						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(filt.GetChunk[f], image_section);
+						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(filt.GetChunk[f], *image_section);
 						float summed = kernel_times_image_section->Sum();
 						output_matrix->SetVal({ f, out_y, out_x }, summed + bias.GetVal({ f, 0 }));
 							curr_x = curr_x + stride;
@@ -112,20 +107,20 @@ namespace CNV {
 					int curr_x = 0; int out_x = 0;
 					while (curr_x + filters.shape[2] <= conv_in.shape[1]) {
 
-						std::vector<int> cic_shape = { conv_in.shape[0], filters.shape[2], filters.shape[3] };  Matrix conv_in_chunk = Matrix(cic_shape);
-						for (int i = 0; i < conv_in.shape[0]; i++) {
-							for (int j = curr_x; j < curr_x + filters.shape[2]; j++) {
-								for (int k = curr_y; k < curr_y + filters.shape[3]; k++) {
-									conv_in_chunk.SetVal({ i, k - curr_y, j - curr_x }, conv_in.GetVal({ i, k, j }));
-								}
-							}
-						}
-						conv_in_chunk.Multiply(dconv_prev.GetVal({ f, out_y, out_x }));
-						if (conv_in_chunk.num_vals != dfilt->num_vals) {
+						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({
+							my_misc_utils::make_useful({ 0, conv_in.shape[0]}),
+							my_misc_utils::make_useful({ curr_y, curr_y + filters.shape[2]}),
+							my_misc_utils::make_useful({ curr_x, curr_x + filters.shape[3]})
+							});
+
+						std::shared_ptr<Matrix> conv_in_chunk = conv_in.GetChunk(args);
+
+						conv_in_chunk->Multiply(dconv_prev.GetVal({ f, out_y, out_x }));
+						if (conv_in_chunk->num_vals != dfilt->num_vals) {
 							throw std::logic_error("Mismatching matrix dimensions in funtion CNV::convolution_backprop -- Error Code 0");
 						}
 						for (int i = 0; i < dfilt->shape[0] * f; i++) {
-							dfilt->matrix_values[i] += conv_in_chunk.matrix_values[i];
+							dfilt->matrix_values[i] += conv_in_chunk->matrix_values[i];
 						}
 
 						std::shared_ptr<Matrix> filter_scaled = filters.GetChunk({ f });
@@ -174,6 +169,18 @@ namespace CNV {
 		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
 	}
 
+	std::shared_ptr<Matrix> global_avgpool(Matrix& image, const int channels) {
+		std::vector<int> ds_shape = { channels, 1, 1 }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(ds_shape);
+
+		for (int chan = 0; chan < image.shape[0]; chan++) {
+			float channel_average = Matrix::Average(image.GetChunk({ chan }));
+
+			downsampled->SetVal({ chan, 0, 0 }, channel_average);
+		}
+
+		return downsampled;
+	}
+
 	std::shared_ptr<Matrix> genpool(const int type, Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
 		Matrix::Reshape(image, { channels, image_height, image_width });
 
@@ -187,23 +194,17 @@ namespace CNV {
 				while(curr_y + filter_size <= image.shape[1]){
 					int curr_x = 0; int out_x = 0;
 					while(curr_x + filter_size <= image.shape[2]){
-						std::vector<int> image_section_shape = {image.shape[0], filter_size, filter_size}; Matrix image_section = Matrix(image_section_shape);
-						std::vector<float> ismat_vals = {};
-						for (int c = 0; c < image.shape[0]; c++) {
-							for (int r = curr_y; r < curr_y + filter_size; r++) {
-								for (int v = curr_x; v < curr_x + filter_size; v++) {
-									ismat_vals.push_back(image.GetVal({c, v, r}));
-								}
-							}
-						}
 
-						if (image_section.num_vals != ismat_vals.size()) {
-							throw(std::length_error("Image section matrix shapes do not match properly"));
-						}
+						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({
+							my_misc_utils::make_useful({ 0, image.shape[0]}),
+							my_misc_utils::make_useful({ curr_y, curr_y + filter_size}),
+							my_misc_utils::make_useful({ curr_x, curr_x + filter_size})
+							});
 
-						image_section.matrix_values = ismat_vals;
-						if (type == 0) downsampled->SetVal({chan, out_y, out_x}, Matrix::Max(image_section)); //type zero corresponds to max-pooling
-						if (type == 1) downsampled->SetVal({chan, out_y, out_x}, Matrix::Average(image_section)); //type one corresponds to avg-pooling
+						std::shared_ptr<Matrix> image_section = image.GetChunk(args);
+
+						if (type == 0) downsampled->SetVal({chan, out_y, out_x}, Matrix::Max(*image_section)); //type zero corresponds to max-pooling
+						if (type == 1) downsampled->SetVal({chan, out_y, out_x}, Matrix::Average(*image_section)); //type one corresponds to avg-pooling
 						curr_x += stride;
 						out_x += 1;
 					}
@@ -221,12 +222,9 @@ namespace CNV {
 		}
 	}
 
-	//See issues on github for what to do next. Erase this comment once you've done it.
-
 	std::shared_ptr<Matrix> maxpool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
 
 		try {
-
 			std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
 
 			for (int c = 0; c < conv_in.shape[0]; c++) {
@@ -235,26 +233,19 @@ namespace CNV {
 					int curr_x = 0; int out_x = 0;
 					while (curr_x + pool_f < conv_in.shape[2]) {
 
-						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({ my_misc_utils::make_useful({0}) });
+						//Always want to take the same shape from each channel (e.g. r, g, and b), but do not want to take all x values or all y values
+
+						my_misc_utils::better_initializer_list<my_misc_utils::better_initializer_list<int>> args = my_misc_utils::make_useful({ 
+							my_misc_utils::make_useful({ 0, conv_in.shape[0]}), 
+							my_misc_utils::make_useful({ curr_y, curr_y + pool_f}),
+							my_misc_utils::make_useful({ curr_x, curr_x + pool_f})
+							});
+
 						std::shared_ptr<Matrix> conv_in_sec = conv_in.GetChunk(args);
-
-						/*std::vector<int> conv_in_sec_shape = { conv_in.shape[0], pool_f, pool_f }; Matrix conv_in_sec = Matrix(conv_in_sec_shape);
-						std::vector<float> cimat_vals = {};
-						for (int c = 0; c < conv_in.shape[0]; c++) {
-							for (int r = curr_y; r < curr_y + pool_f; r++) {
-								for (int v = curr_x; v < curr_x + pool_f; v++) {
-									cimat_vals.push_back(conv_in.GetVal({ c, v, r }));
-								}
-							}
-						}
-
-						if (conv_in_sec.num_vals != cimat_vals.size()) {
-							throw(std::length_error("Image section matrix shapes do not match properly"));
-						}*/
 
 						std::vector<int> nanargmax_unraveled = Matrix::NanArgmax(*conv_in_sec);
 
-						dout->SetVal({ c, curr_y + nanargmax_unraveled[0], curr_x + nanargmax_unraveled[1] }, dpool.GetVal({ c, out_y, out_x }));
+						dout->SetVal({ c, curr_y + nanargmax_unraveled[0], curr_x + nanargmax_unraveled[1] }, dpool.GetVal({ c, out_y, out_x })); //This is correct because the default values when dout is created are zeroes, so filter can be bypassed
 
 						curr_x += pool_s;
 						out_x += 1;
@@ -270,15 +261,15 @@ namespace CNV {
 			Logger::Error(e.what());
 			return nullptr;
 		}
+	}
 
+	std::shared_ptr<Matrix> avgpool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
 
-
+		return std::make_shared<Matrix>(&conv_in);
 
 	}
+
 }
-
-
-
 
 
 #endif
