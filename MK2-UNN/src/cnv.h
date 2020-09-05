@@ -161,25 +161,8 @@ namespace CNV {
 		}
 	}
 
-	std::shared_ptr<Matrix> maxpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
-		return genpool(0, image, channels, image_width, image_height, filter_size, stride);
-	}
 
-	std::shared_ptr<Matrix> avgpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
-		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
-	}
 
-	std::shared_ptr<Matrix> global_avgpool(Matrix& image, const int channels) {
-		std::vector<int> ds_shape = { channels, 1, 1 }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(ds_shape);
-
-		for (int chan = 0; chan < image.shape[0]; chan++) {
-			float channel_average = Matrix::Average(image.GetChunk({ chan }));
-
-			downsampled->SetVal({ chan, 0, 0 }, channel_average);
-		}
-
-		return downsampled;
-	}
 
 	std::shared_ptr<Matrix> genpool(const int type, Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
 		Matrix::Reshape(image, { channels, image_height, image_width });
@@ -220,6 +203,29 @@ namespace CNV {
 			Logger::Error(e.what());
 			return nullptr;
 		}
+	}
+
+	std::shared_ptr<Matrix> maxpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
+		return genpool(0, image, channels, image_width, image_height, filter_size, stride);
+	}
+
+	std::shared_ptr<Matrix> avgpool(Matrix& image, const int channels, const int image_width, const int image_height, const int filter_size = 2, const int stride = 2) {
+		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
+	}
+
+	std::shared_ptr<Matrix> global_avgpool(Matrix& image, const int channels, const int image_width, const int imge_height) {
+		Matrix::Reshape(image, { channels, image_height, image_width });
+
+		std::vector<int> ds_shape = { channels, 1, 1 }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(ds_shape);
+
+		for (int chan = 0; chan < image.shape[0]; chan++) {
+			float channel_average = Matrix::Average(image.GetChunk({ chan }));
+
+			downsampled->SetVal({ chan, 0, 0 }, channel_average);
+		}
+
+		Matrix::Reshape(*downsampled, { channels, 1 });
+		return downsampled;
 	}
 
 	std::shared_ptr<Matrix> maxpool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride

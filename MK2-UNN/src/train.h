@@ -99,24 +99,63 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 						sample_weights_deltas.push_back(delt_grad_vec[0]); sample_bias_deltas.push_back(delt_grad_vec[1]);
 						weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
 					}
+					else if (inner_layers[l] == 1) {
+
+					}
+					else if (inner_layers[l] == 2) {
+
+					}
+					else if (inner_layers[l] == 3) {
+
+					}
 					else if (inner_layers[l] == 4) {
 
 					}
+					else if (inner_layers[l] == 5) {
 
+					}
+					else if (inner_layers[l] == 6) {
 
+					}
+					else if (inner_layers[l] == 7) {
+
+					}
+				}
+
+				//					===== Input Layer =====
+
+				if (inner_layers[inner_layers.size() - 1] == 0) {
+					std::vector<std::shared_ptr<Matrix>> delt_grad_vec = fully_connected::backprop(last_errors, weights[weights_backprop_idx],
+						hiddens[hiddens_idx], hiddens[hiddens_idx - 1],
+						learning_rate, fully_connected_activations[fc_activation_idx]);
+					sample_weights_deltas.push_back(delt_grad_vec[0]); sample_bias_deltas.push_back(delt_grad_vec[1]);
+					weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
+				}
+				else if (inner_layers[0] == 1) {
+
+				}
+				else if (inner_layers[0] == 2) {
+
+				}
+				else if (inner_layers[0] == 3) {
+
+				}
+				else if (inner_layers[0] == 4) {
+
+				}
+				else if (inner_layers[0] == 5) {
+
+				}
+				else if (inner_layers[0] == 6) {
+
+				}
+				else if (inner_layers[0] == 7) {
 
 				}
 
 
 
-
-
-
-
-
 			}
-
-
 
 
 			if (print) {

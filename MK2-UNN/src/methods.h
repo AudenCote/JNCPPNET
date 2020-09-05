@@ -54,8 +54,9 @@ void NeuralNetwork::AvgPool(const int channels, const int image_width, const int
 	inner_layers.push_back(6);
 }
 
-void NeuralNetwork::GlobAvgPool(const int channels) {
-	globavgpool_channels_array.push_back(channels);
+void NeuralNetwork::GlobAvgPool(const int channels, const int image_width, const int image_height) {
+	std::vector<int> globavgpool_info = { channels, image_height, image_width };
+	globavgpool_info_array.push_back(globavgpool_info);
 	inner_layers.push_back(7);
 }
 

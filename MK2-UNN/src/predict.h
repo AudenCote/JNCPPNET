@@ -52,15 +52,15 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Ma
 		cnv_predict_idx++;
 	}
 	else if (inner_layers[0] == 5) {
-		std::shared_ptr<Matrix> last_hidden = CNV::maxpool(input_matrix, maxpool_info_array[2], maxpool_info_array[3], maxpool_info_array[4], maxpool_info_array[0], maxpool_info_array[1]);
+		std::shared_ptr<Matrix> last_hidden = CNV::maxpool(input_matrix, maxpool_info_array[mxp_predict_idx][2], maxpool_info_array[mxp_predict_idx][3], maxpool_info_array[mxp_predict_idx][4], maxpool_info_array[mxp_predict_idx][0], maxpool_info_array[mxp_predict_idx][1]);
 		mxp_predict_idx++;
 	}
 	else if (inner_layers[0] == 6) {
-		std::shared_ptr<Matrix> last_hidden = CNV::avgpool(input_matrix, avgpool_info_array[2], avgpool_info_array[3], avgpool_info_array[4], avgpool_info_array[0], avgpool_info_array[1]);
+		std::shared_ptr<Matrix> last_hidden = CNV::avgpool(input_matrix, avgpool_info_array[mxp_predict_idx][2], avgpool_info_array[mxp_predict_idx][3], avgpool_info_array[mxp_predict_idx][4], avgpool_info_array[mxp_predict_idx][0], avgpool_info_array[mxp_predict_idx][1]);
 		avgp_predict_idx++;
 	}
 	else if (inner_layers[0] == 7) {
-		std::shared_ptr<Matrix> last_hidden = CNV::global_avgpool(input_matrix, globavgpool_channels_array[0]);
+		std::shared_ptr<Matrix> last_hidden = CNV::global_avgpool(input_matrix, globavgpool_info_array[glob_avgp_predict_idx][0], globavgpool_info_array[glob_avgp_predict_idx][2], globavgpool_info_array[glob_avgp_predict_idx][1]);
 		glob_avgp_predict_idx++; 
 	}
 
@@ -91,48 +91,58 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Ma
 			cnv_predict_idx++;
 		}
 		else if (inner_layers[0] == 5) {
-			std::shared_ptr<Matrix> last_hidden = CNV::maxpool(*hiddens[hiddens.size() - 1], maxpool_info_array[2], maxpool_info_array[3], maxpool_info_array[4], maxpool_info_array[0], maxpool_info_array[1]);
+			std::shared_ptr<Matrix> last_hidden = CNV::maxpool(*hiddens[hiddens.size() - 1], maxpool_info_array[mxp_predict_idx][2], maxpool_info_array[mxp_predict_idx][3], maxpool_info_array[mxp_predict_idx][4], maxpool_info_array[mxp_predict_idx][0], maxpool_info_array[mxp_predict_idx][1]);
 			mxp_predict_idx++;
 		}
 		else if (inner_layers[0] == 6) {
-			std::shared_ptr<Matrix> last_hidden = CNV::avgpool(input_matrix, avgpool_info_array[2], avgpool_info_array[3], avgpool_info_array[4], avgpool_info_array[0], avgpool_info_array[1]);
+			std::shared_ptr<Matrix> last_hidden = CNV::avgpool(*hiddens[hiddens.size() - 1], avgpool_info_array[avgp_predict_idx][2], avgpool_info_array[avgp_predict_idx][3], avgpool_info_array[avgp_predict_idx][4], avgpool_info_array[avgp_predict_idx][0], avgpool_info_array[avgp_predict_idx][1]);
 			avgp_predict_idx++;
 		}
 		else if (inner_layers[0] == 7) {
-			std::shared_ptr<Matrix> last_hidden = CNV::global_avgpool(input_matrix, globavgpool_channels_array[0]);
+			std::shared_ptr<Matrix> last_hidden = CNV::global_avgpool(*hiddens[hiddens.size() - 1], globavgpool_info_array[glob_avgp_predict_idx][0], globavgpool_info_array[glob_avgp_predict_idx][2], globavgpool_info_array[glob_avgp_predict_idx][1]);
 			glob_avgp_predict_idx++;
 		}
 
 		hiddens.push_back(last_hidden);
 	}
 
+	std::shared_ptr<Matrix> output;
+
 	if (inner_layers[0] == 0) {
-		std::shared_ptr<Matrix> output = fully_connected::feed_forward(*hiddens[hiddens.size() - 1], *weights[weights.size() - 1], *biases[biases.size() - 1], fully_connected_activations[fcl_predict_idx]);
+		output = fully_connected::feed_forward(*hiddens[hiddens.size() - 1], *weights[weights.size() - 1], *biases[biases.size() - 1], fully_connected_activations[fcl_predict_idx]);
 		fcl_predict_idx++;
 	}
 	else if (inner_layers[0] == 1) {
-		std::shared_ptr<Matrix> output = LRN::inter_channel(*hiddens[hiddens.size() - 1], LRN_dimensions[lrn_predict_idx][0], LRN_dimensions[lrn_predict_idx][1],
+		output = LRN::inter_channel(*hiddens[hiddens.size() - 1], LRN_dimensions[lrn_predict_idx][0], LRN_dimensions[lrn_predict_idx][1],
 			LRN_dimensions[lrn_predict_idx][2], LRN_info[lrn_predict_idx][0], LRN_info[lrn_predict_idx][1],
 			LRN_info[lrn_predict_idx][2], LRN_info[lrn_predict_idx][3]);
 		lrn_predict_idx++;
 	}
 	else if (inner_layers[0] == 2) {
-		std::shared_ptr<Matrix> output = LRN::intra_channel(*hiddens[hiddens.size() - 1], LRN_dimensions[lrn_predict_idx][0], LRN_dimensions[lrn_predict_idx][1],
+		output = LRN::intra_channel(*hiddens[hiddens.size() - 1], LRN_dimensions[lrn_predict_idx][0], LRN_dimensions[lrn_predict_idx][1],
 			LRN_dimensions[lrn_predict_idx][2], LRN_info[lrn_predict_idx][0], LRN_info[lrn_predict_idx][1],
 			LRN_info[lrn_predict_idx][2], LRN_info[lrn_predict_idx][3]);
 		lrn_predict_idx++;
 	}
 	else if (inner_layers[0] == 3) {
-		std::shared_ptr<Matrix> output = hiddens[hiddens.size() - 1];
+		output = hiddens[hiddens.size() - 1];
 	}
 	else if (inner_layers[0] == 4) {
-		std::shared_ptr<Matrix> output = CNV::convolution(*hiddens[hiddens.size() - 1], conv_info_array[cnv_predict_idx][5], conv_info_array[cnv_predict_idx][0], conv_info_array[cnv_predict_idx][1],
+		output = CNV::convolution(*hiddens[hiddens.size() - 1], conv_info_array[cnv_predict_idx][5], conv_info_array[cnv_predict_idx][0], conv_info_array[cnv_predict_idx][1],
 			*weights[weights.size() - 1], *biases[biases.size() - 1], conv_info_array[cnv_predict_idx][4], conv_info_array[cnv_predict_idx][2]);
 		cnv_predict_idx++;
 	}
 	else if (inner_layers[0] == 5) {
-		std::shared_ptr<Matrix> output = CNV::maxpool(*hiddens[hiddens.size() - 1], maxpool_info_array[2], maxpool_info_array[3], maxpool_info_array[4], maxpool_info_array[0], maxpool_info_array[1]);
+		output = CNV::maxpool(*hiddens[hiddens.size() - 1], maxpool_info_array[mxp_predict_idx][2], maxpool_info_array[mxp_predict_idx][3], maxpool_info_array[mxp_predict_idx][4], maxpool_info_array[mxp_predict_idx][0], maxpool_info_array[mxp_predict_idx][1]);
 		mxp_predict_idx++;
+	}
+	else if (inner_layers[0] == 6) {
+		output = CNV::avgpool(*hiddens[hiddens.size() - 1], avgpool_info_array[avgp_predict_idx][2], avgpool_info_array[avgp_predict_idx][3], avgpool_info_array[avgp_predict_idx][4], avgpool_info_array[avgp_predict_idx][0], avgpool_info_array[avgp_predict_idx][1]);
+		avgp_predict_idx++;
+	}
+	else if (inner_layers[0] == 7) {
+		output = CNV::global_avgpool(*hiddens[hiddens.size() - 1], globavgpool_channels_array[glob_avgp_predict_idx]);
+		glob_avgp_predict_idx++;
 	}
 
 	std::vector<std::shared_ptr<Matrix>> return_vector[1 + hiddens.size() + weights.size() + biases.size()] = { output };

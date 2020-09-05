@@ -22,10 +22,10 @@ private:
 	std::vector<int> maxpool_nodes_array; //for use before fully connected layer ONLY 
 	std::vector<std::vector<int>> maxpool_info_array;
 
-	std::vector<int> avgpool_nodes_array;
+	std::vector<int> avgpool_nodes_array; //for use before fully connected layer ONLY
 	std::vector<std::vector<int>> avgpool_info_array;
 
-	std::vector<int> globavgpool_channels_array;
+	std::vector<std::vector<int>> globavgpool_info_array; //only one node as output per channel
 
 	std::vector<std::vector<float>> LRN_info;
 	std::vector<std::vector<int>> LRN_dimensions;
@@ -85,7 +85,7 @@ public:
 
 	void AvgPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride);
 
-	void GlobAvgPool(const int channels);
+	void GlobAvgPool(const int channels, const int image_width, const int image_height);
 
 	void LocalResponseNormalization(const char* type, const int channels, const int width, const int height, const float epsilon, const float alpha, const float beta, const float radius);
 
