@@ -34,13 +34,16 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 			std::shared_ptr<Matrix> input_batch = input_batches.GetChunk({ b });
 			std::shared_ptr<Matrix> target_batch = target_batches.GetChunk({ b });
 
-			std::vector<std::vector<std::shared_ptr<Matrix>>> bias_deltas;
-			std::vector<std::vector<std::shared_ptr<Matrix>>> weights_deltas;
+			std::vector<std::vector<std::shared_ptr<Matrix>>> fcl_bias_deltas;
+			std::vector<std::vector<std::shared_ptr<Matrix>>> fcl_weights_deltas;
+			std::vector<std::vector<std::shared_ptr<Matrix>>> cnv_bias_deltas;
+			std::vector<std::vector<std::shared_ptr<Matrix>>> cnv_filt_deltas;
 
 			double loss;
 
 			for (int p = 0; p < batch_size; p++) {
-				std::vector<std::shared_ptr<Matrix>> sample_weights_deltas; std::vector<std::shared_ptr<Matrix>> sample_bias_deltas;
+				std::vector<std::shared_ptr<Matrix>> fcl_sample_weights_deltas; std::vector<std::shared_ptr<Matrix>> fcl_sample_bias_deltas; 
+				std::vector<std::shared_ptr<Matrix>> cnv_sample_filt_deltas; std::vector<std::shared_ptr<Matrix>> cnv_sample_bias_deltas;
 
 				//==================================================================//
 				//																	//
@@ -96,11 +99,15 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 						std::vector<std::shared_ptr<Matrix>> delt_grad_vec = fully_connected::backprop(last_errors, weights[weights_backprop_idx], 
 																												 hiddens[hiddens_idx], hiddens[hiddens_idx - 1], 
 																												 learning_rate, fully_connected_activations[fc_activation_idx]);
-						sample_weights_deltas.push_back(delt_grad_vec[0]); sample_bias_deltas.push_back(delt_grad_vec[1]);
+						fcl_sample_weights_deltas.push_back(delt_grad_vec[0]); fcl_sample_bias_deltas.push_back(delt_grad_vec[1]);
 						weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
 					}
 					else if (inner_layers[l] == 1) {
+						
+						std::vector<std::shared_ptr<Matrix>> conv_grads_dout = CNV::convolution_backprop(); //returns { dout, dfilt, dbias }
 
+						cnv_sample_filt_deltas.push_back(conv_grads_dout[1]); cnv_sample_bias_deltas.push_back(conv_grads_dout[2]);
+						hiddens_idx -= 1;
 					}
 					else if (inner_layers[l] == 2) {
 

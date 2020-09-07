@@ -19,12 +19,12 @@ C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(41,137): error C3254: 'Mat
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(41,137): error C2838: 'MaxPool': illegal qualified name in member declaration
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(49,137): error C3254: 'Matrix': class contains explicit override 'AvgPool' but does not derive from an interface that contains the function declaration
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(49,137): error C2838: 'AvgPool': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,53): error C3254: 'Matrix': class contains explicit override 'GlobAvgPool' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,53): error C2838: 'GlobAvgPool': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(62,199): error C3254: 'Matrix': class contains explicit override 'LocalResponseNormalization' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(62,199): error C2838: 'LocalResponseNormalization': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(81,98): error C3254: 'Matrix': class contains explicit override 'BatchNormalization' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(81,98): error C2838: 'BatchNormalization': illegal qualified name in member declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,100): error C3254: 'Matrix': class contains explicit override 'GlobAvgPool' but does not derive from an interface that contains the function declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,100): error C2838: 'GlobAvgPool': illegal qualified name in member declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(63,199): error C3254: 'Matrix': class contains explicit override 'LocalResponseNormalization' but does not derive from an interface that contains the function declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(63,199): error C2838: 'LocalResponseNormalization': illegal qualified name in member declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(82,98): error C3254: 'Matrix': class contains explicit override 'BatchNormalization' but does not derive from an interface that contains the function declaration
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(82,98): error C2838: 'BatchNormalization': illegal qualified name in member declaration
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(4,1): error C2059: syntax error: 'namespace'
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(4,27): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
 C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(9,1): error C2059: syntax error: 'namespace'

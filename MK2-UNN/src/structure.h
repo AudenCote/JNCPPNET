@@ -1,6 +1,14 @@
 #ifndef STRUCTURE_INCLUDE
 #define STRUCTURE_INCLUDE
 
+/*
+
+Notation:
+FOP = Forward Operation
+
+*/
+
+
 class NeuralNetwork {
 private:
 	int image_channels = 0;

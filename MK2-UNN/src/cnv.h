@@ -65,7 +65,7 @@ namespace CNV {
 						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(filt.GetChunk[f], *image_section);
 						float summed = kernel_times_image_section->Sum();
 						output_matrix->SetVal({ f, out_y, out_x }, summed + bias.GetVal({ f, 0 }));
-							curr_x = curr_x + stride;
+						curr_x = curr_x + stride;
 						out_x = out_x + 1;
 					}
 					curr_y = curr_y + stride;
@@ -73,7 +73,7 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(*output_matrix, { filt.shape[0] * out_dim * out_dim, 1 });
+			Matrix::Reshape(*output_matrix, { filt.shape[0] * out_dim * out_dim, 1 }); //Dimension reduction: check
 
 			if (activation == "Relu" || activation == "ReLU" || activation == "relu") {
 				Matrix::ReLU(output_matrix);
@@ -96,6 +96,12 @@ namespace CNV {
 
 	std::vector<std::shared_ptr<Matrix>> convolution_backprop(Matrix& dconv_prev, Matrix& conv_in, Matrix& filters, int stride) {
 		try{
+
+			//Reshaping conv_in vector into shape expected as input to current conv layer on FOP
+			//DO THIS
+
+			//Reshaping dconv_prev vector into shape outputted by current conv layer on FOP
+			//DO THIS
 		
 			std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
 			std::shared_ptr<Matrix> dfilt = std::make_shared<Matrix>(filters.shape);
@@ -154,7 +160,8 @@ namespace CNV {
 				}
 			}
 
-			std::vector<std::shared_ptr<Matrix>> return_vec = { dout, dfilt, dbias };  return return_vec;
+			Matrix::Reshape(dout, );
+			std::vector<std::shared_ptr<Matrix>> return_vec = { dfilt, dbias, dout };  return return_vec;
 		}
 		catch(std::logic_error e){
 			Logger::Error(e.what());
