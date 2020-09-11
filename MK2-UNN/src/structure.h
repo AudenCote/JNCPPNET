@@ -3,8 +3,20 @@
 
 /*
 
-Notation:
+Notation and Customs:
 FOP = Forward Operation
+BOP = Backward Operation
+
+input layer -> -1
+output layer -> -2
+fully connected layer -> 0
+inter_channel LRN -> 1
+intra_channel LRN -> 2
+batch_norm -> 3
+convolutional layer -> 4
+max-pooling layer -> 5
+average-pooling layer -> 6
+global average-pooling layer -> 7
 
 */
 
@@ -45,16 +57,6 @@ private:
 	std::vector<const char*> conv_activations;
 
 	std::vector<int> inner_layers = {};
-	//input layer -> -1
-	//output layer -> -2
-	//fully connected layer -> 0
-	//inter_channel LRN -> 1
-	//intra_channel LRN -> 2
-	//batch_norm -> 3
-	//convolutional layer -> 4
-	//max-pooling layer -> 5
-	//average-pooling layer -> 6
-	//global average-pooling layer -> 7
 
 	std::vector<std::shared_ptr<Matrix>> weights;
 	std::vector<std::shared_ptr<Matrix>> biases;

@@ -88,11 +88,14 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 				sample_weights_deltas.push_back(weights_ho_deltas);
 				sample_bias_deltas.push_back(gradients);
 
-				//					 ===== INNER LAYERS =====
+				//					 ===== INNER LAYERS: By definition these may not be -1 (input) or -2 (output) layers =====
 
 				int weights_backprop_idx = weights.size() - 1;
 				int fc_activation_idx = fully_connected_activations.size() - 1;
 				int hiddens_idx = hiddens.size() - 1;
+				
+				//Vector to store the latest gradient produced in the inner layers iteration process
+				std::vector<float> last_gradients;
 
 				for (int l = inner_layers.size() - 1; l >= 0; l--) {
 					if (inner_layers[l] == 0) {
@@ -100,13 +103,17 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, const char
 																												 hiddens[hiddens_idx], hiddens[hiddens_idx - 1], 
 																												 learning_rate, fully_connected_activations[fc_activation_idx]);
 						fcl_sample_weights_deltas.push_back(delt_grad_vec[0]); fcl_sample_bias_deltas.push_back(delt_grad_vec[1]);
+						int gradients_vector_length = ;
+						last_gradients = Matrix::Reshape(delt_grad_vec[1], {1, }); //Turning gradients into vector to be passed back 
 						weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
 					}
 					else if (inner_layers[l] == 1) {
 						
-						std::vector<std::shared_ptr<Matrix>> conv_grads_dout = CNV::convolution_backprop(); //returns { dout, dfilt, dbias }
+						std::vector<std::shared_ptr<Matrix>> conv_grads_vec = CNV::convolution_backprop(); //returns { dout, dfilt, dbias }
 
-						cnv_sample_filt_deltas.push_back(conv_grads_dout[1]); cnv_sample_bias_deltas.push_back(conv_grads_dout[2]);
+						cnv_sample_filt_deltas.push_back(conv_grads_vec[1]); cnv_sample_bias_deltas.push_back(conv_grads_vec[2]);
+						int gradients_vector_length = ;
+						last_gradients = Matrix::Reshape(conv_grads_vec[10, { 1, sodghowidgh }); //Turning gradients into vector to be passed back 
 						hiddens_idx -= 1;
 					}
 					else if (inner_layers[l] == 2) {

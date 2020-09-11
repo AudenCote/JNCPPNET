@@ -276,9 +276,11 @@ namespace CNV {
 		}
 	}
 
-	std::shared_ptr<Matrix> avgpool_backprop(Matrix& dpool, Matrix& conv_in, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
+	std::shared_ptr<Matrix> avgpool_backprop(Matrix& dpool, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
 
-		return std::make_shared<Matrix>(&conv_in);
+		//Need to calculate algorithm for expanding L1Avg to L1 size given filter size and stride. For this ONLY DPOOL IS NEEDED, NOT CONV_IN. This makes things easier in train.h
+
+
 
 	}
 

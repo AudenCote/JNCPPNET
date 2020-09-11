@@ -147,6 +147,8 @@ public:
 					outputs = Matrix::ElementwiseAddition(*outputs, *biases[biases.size() - 1]);
 					Matrix::Sigmoid(outputs);
 
+					//Backprop
+
 					loss = NeuralNetwork::mean_square_error(*targets, *outputs);
 					std::shared_ptr<Matrix> last_errors = Matrix::ElementwiseSubtraction(*targets, *outputs);
 					Matrix::SigmoidPrime(outputs);
