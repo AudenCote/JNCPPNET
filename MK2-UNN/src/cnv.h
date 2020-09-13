@@ -73,8 +73,6 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(*output_matrix, { filt.shape[0] * out_dim * out_dim, 1 }); //Dimension reduction: check
-
 			if (activation == "Relu" || activation == "ReLU" || activation == "relu") {
 				Matrix::ReLU(output_matrix);
 			}
@@ -94,7 +92,7 @@ namespace CNV {
 		}
 	}
 
-	std::vector<std::shared_ptr<Matrix>> convolution_backprop(Matrix& dconv_prev, Matrix& conv_in, Matrix& filters, int stride) {
+	std::vector<std::shared_ptr<Matrix>> convolution_backprop(Matrix& dconv_prev, Matrix& conv_in, Matrix& filters, const int stride) {
 		try{
 
 			//Reshaping conv_in vector into shape expected as input to current conv layer on FOP
@@ -160,14 +158,12 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(dout, );
 			std::vector<std::shared_ptr<Matrix>> return_vec = { dfilt, dbias, dout };  return return_vec;
 		}
 		catch(std::logic_error e){
 			Logger::Error(e.what());
 		}
 	}
-
 
 
 
@@ -220,7 +216,7 @@ namespace CNV {
 		return genpool(1, image, channels, image_width, image_height, filter_size, stride);
 	}
 
-	std::shared_ptr<Matrix> global_avgpool(Matrix& image, const int channels, const int image_width, const int imge_height) {
+	std::shared_ptr<Matrix> global_avgpool(Matrix& image, const int channels, const int image_width, const int image_height) {
 		Matrix::Reshape(image, { channels, image_height, image_width });
 
 		std::vector<int> ds_shape = { channels, 1, 1 }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(ds_shape);

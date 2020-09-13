@@ -60,6 +60,7 @@ private:
 
 	std::vector<std::shared_ptr<Matrix>> weights;
 	std::vector<std::shared_ptr<Matrix>> biases;
+
 	std::vector<std::vector<float>> bnt_trainables; // gammas and betas for batch norm
 	std::vector<std::vector<int>> bnt_inner_shapes; //shape of the layer that comes before batch norm layer 
 	// - to be put together with batch size to produce total BNT shape for training
@@ -89,7 +90,7 @@ public:
 
 	void FullyConnected(int nodes, const char* activation);
 
-	void Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const int channels = 0, const char* activation);
+	void Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const char* activation, const int channels = 0);
 
 	void MaxPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride);
 

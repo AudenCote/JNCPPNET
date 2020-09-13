@@ -184,7 +184,7 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			}
 
 			bnt_inner_shapes.push_back(bnt_s);
-			std::vector<float> trainables = { gen_random_float(-1, 1), gen_random_float(-1, 1) }; bnt_trainables.push_back(trainables);
+			std::vector<float> trainables = { my_misc_utils::gen_random_float(-1, 1), my_misc_utils::gen_random_float(-1, 1) }; bnt_trainables.push_back(trainables);
 			bnt_idx += 1;
 		}
 		else if (i == 4) {

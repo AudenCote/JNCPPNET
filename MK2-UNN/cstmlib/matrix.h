@@ -116,7 +116,7 @@ public:
 
     void Randomize() {
         for (int i = 0; i < num_vals; ++i) {
-            matrix_values[i] = gen_random_float(-1, 1);
+            matrix_values[i] = my_misc_utils::gen_random_float(-1, 1);
         }
     }
 
@@ -352,6 +352,7 @@ public:
     void Square() {
         for (int i = 0; i < num_vals; i++)
             matrix_values[i] = matrix_values[i] * matrix_values[i];
+    }
     
 
     static std::shared_ptr<Matrix> DotProduct(Matrix& mat1, Matrix& mat2) {
@@ -471,7 +472,7 @@ public:
             std::vector<int> out_mat_shape = { mat->shape[1], mat->shape[0] }; std::shared_ptr<Matrix> out_mat = std::make_shared<Matrix>(out_mat_shape);
             for (int i = 0; i < mat->shape[0]; ++i) {
                 for (int j = 0; j < mat->shape[1]; ++j) {
-                    out_mat->Set({ j, i }, mat->GetVal({ i, j }));
+                    out_mat->SetVal({ j, i }, mat->GetVal({ i, j }));
                 }
             }
             return out_mat;
