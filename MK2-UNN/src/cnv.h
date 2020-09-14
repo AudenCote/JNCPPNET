@@ -272,13 +272,30 @@ namespace CNV {
 		}
 	}
 
-	std::shared_ptr<Matrix> avgpool_backprop(Matrix& dpool, int pool_f, int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
+	std::shared_ptr<Matrix> avgpool_backprop(Matrix& dpool, Matrix& conv_in, const int pool_f, const int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
 
 		//Need to calculate algorithm for expanding L1Avg to L1 size given filter size and stride. For this ONLY DPOOL IS NEEDED, NOT CONV_IN. This makes things easier in train.h
 
-
-
 	}
+
+	std::shared_ptr<Matrix> globavgpool_backprop(Matrix& dpool, Matrix& conv_in, const int pool_f, const int pool_s) { //conv2 is output of most recent conv layer on the feed forward, pool_f is the filter size, pool_s is stride
+
+		std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
+
+		for (int chan = 0; chan < dout->shape[0]; chan++) {
+			float channel_average = Matrix::Average(dout->GetChunk(my_misc_utils::make_useful({ my_misc_utils::make_useful({ chan }) })));
+			std::vector<int> dout_channel_shape = {dout[1], dout[2]};
+			std::shared_ptr<Matrix> averaged_channel = std::make_shared<Matrix>(dout_channel_shape);
+			for (int v = 0; v < averaged_channel->num_vals; v++) {
+				averaged_channel->matrix_values[v] = channel_average;
+			}
+			dout->SetChunk({ chan }, *averaged_channel);
+		}
+
+		return dout;
+	}
+
+
 
 }
 
