@@ -199,7 +199,6 @@ namespace CNV {
 				}
 			}
 
-			Matrix::Reshape(*downsampled, { image.shape[0] * out_dims * out_dims, 1 });
 			return downsampled;
 		}
 		catch (const std::length_error& e) {
@@ -227,7 +226,6 @@ namespace CNV {
 			downsampled->SetVal({ chan, 0, 0 }, channel_average);
 		}
 
-		Matrix::Reshape(*downsampled, { channels, 1 });
 		return downsampled;
 	}
 

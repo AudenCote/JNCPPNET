@@ -11,7 +11,7 @@
 #include <methods.h>
 #include <fcl.h>
 #include <cnv.h>
-#include <lrn.h> //No build errors
+#include <lrn.h> 
 #include <bnt.h>
 #include <predict.h>
 #include <train.h>

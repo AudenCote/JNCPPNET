@@ -49,6 +49,7 @@ class NeuralNetwork:
 
     def predict(self, input_array, data):
         inputs = unflatten(input_array)
+        print(inputs)
         weights, biases = data
 
         weights_ih = weights[0]
@@ -56,7 +57,8 @@ class NeuralNetwork:
         bias_h = biases[0]
         bias_o = biases[-1]
 
-        print(weights_ih)
+        print(len(weights_ih), len(weights_ih[1]))
+        print(len(inputs), len(inputs[1]))
 
         hidden1 = matrix_multiplication(weights_ih, inputs)
         hidden1 = elementwise_addition(hidden1, bias_h)
