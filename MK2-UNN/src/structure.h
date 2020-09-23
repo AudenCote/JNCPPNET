@@ -56,7 +56,7 @@ private:
 	std::string output_layer_activation;
 	std::vector<const char*> conv_activations;
 
-	std::vector<int> inner_layers = {};
+	std::vector<int> inner_layers;
 
 	std::vector<std::shared_ptr<Matrix>> weights;
 	std::vector<std::shared_ptr<Matrix>> biases;
@@ -72,7 +72,7 @@ private:
 
 	int get_norm_layer_outputs(const int layer_index);
 
-	std::vector<std::shared_ptr<Matrix>> feed_forward_all_template(Matrix& input_array, bool vectorize_inputs = true);
+	std::vector<std::shared_ptr<Matrix>> feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs = true);
 
 public:
 	NeuralNetwork(const int in_nodes, const int out_nodes, const float rate)
@@ -90,7 +90,7 @@ public:
 
 	void FullyConnected(int nodes, const char* activation);
 
-	void Convolutional(const int image_width, const int image_height, const int filter_size, const int filters, const int stride, const char* activation, const int channels = 0);
+	void Convolutional(const int image_width, const int image_height, const int filters, const int stride, const int channels, const int filter_size, const char* activation);
 
 	void MaxPool(const int channels, const int image_width, const int image_height, const int filter_size, const int stride);
 
@@ -102,7 +102,7 @@ public:
 
 	void BatchNormalization(const float gamma, const float beta, const float epsilon);
 
-	std::shared_ptr<Matrix> Predict(Matrix& input_array, bool vectorize_inputs = true);
+	std::shared_ptr<Matrix> Predict(const Matrix& input_array, const bool vectorize_inputs = true);
 
 	void Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type, int epochs, int batch_size, float learning_rate, bool print);
 

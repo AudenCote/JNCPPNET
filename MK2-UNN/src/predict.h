@@ -1,13 +1,9 @@
 #ifndef PREDICT_INCLUDE
 #define PREDICT_INCLUDE
 
-std::shared_ptr<Matrix> NeuralNetwork::Predict(Matrix& input_array, bool vectorize_inputs = true) {
-	std::vector<std::shared_ptr<Matrix>>& feed_forward_return_vector = feed_forward_all_template(input_array, vectorize_inputs);
-	return feed_forward_return_vector[0];
-}
 
+std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs = true) {
 
-std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Matrix& input_array, bool vectorize_inputs = true) {
 	std::vector<int> inp_shape;
 	if (vectorize_inputs) {
 		inp_shape = input_array.shape; inp_shape.push_back(1);
@@ -47,7 +43,7 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Ma
 		lrn_predict_idx++;
 	}
 	else if (inner_layers[0] == 3) {
-		last_hidden = input_matrix; //Sort this out
+		*last_hidden = input_matrix;
 	}
 	else if (inner_layers[0] == 4) {
 		last_hidden = CNV::convolution(input_matrix, conv_info_array[cnv_predict_idx][5], conv_info_array[cnv_predict_idx][0], conv_info_array[cnv_predict_idx][1],
@@ -168,11 +164,19 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(Ma
 		glob_avgp_predict_idx++;
 	}
 
-	std::vector<std::shared_ptr<Matrix>> return_vector[1 + hiddens.size() + weights.size() + biases.size()] = { output };
-	return_vector.insert(return_vector.end(), hiddens.begin(), hiddens.end());
-	return_vector.insert(return_vector.end(), weights.begin(), weights.end());
-	return_vector.insert(return_vector.end(), biases.begin(), biases.end());
+	//Putting into the return vector all of the data that needs to be accessed during training
+	std::vector<std::shared_ptr<Matrix>> return_vector = { output };
+	for (std::shared_ptr<Matrix> hidden : hiddens) { return_vector.push_back(hidden); }
+	for (std::shared_ptr<Matrix> weight_m : weights) { return_vector.push_back(weight_m); }
+	for (std::shared_ptr<Matrix> bias_v : biases) { return_vector.push_back(bias_v); }
 	return return_vector;
 }
+
+
+std::shared_ptr<Matrix> NeuralNetwork::Predict(const Matrix& input_array, const bool vectorize_inputs = true) {
+	std::vector<std::shared_ptr<Matrix>> feed_forward_return_vector = feed_forward_all_template(input_array, vectorize_inputs);
+	return feed_forward_return_vector[0];
+}
+
 
 #endif

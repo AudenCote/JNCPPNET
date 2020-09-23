@@ -85,8 +85,8 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 				std::shared_ptr<Matrix> hidden3_tr = Matrix::Transpose(hiddens[hiddens.size() - 1]);
 				std::shared_ptr<Matrix> weights_ho_deltas = Matrix::DotProduct(*gradients, *hidden3_tr);
 
-				sample_weights_deltas.push_back(weights_ho_deltas); //See above comment if this gives trouble
-				sample_bias_deltas.push_back(gradients);
+				fcl_sample_weights_deltas.push_back(weights_ho_deltas); //See above comment if this gives trouble
+				fcl_sample_bias_deltas.push_back(gradients);
 
 				//					 ===== INNER LAYERS: By definition these may not be -1 (input) or -2 (output) layers =====
 
@@ -194,9 +194,6 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 		}
 
 	}
-
-	std::vector<std::shared_ptr<Matrix>>& feed_forward_return_vector = feed_forward_all_template();
-
 }
 
 

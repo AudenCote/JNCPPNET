@@ -1,45 +1,100 @@
 ﻿  main.cpp
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(82): error C2548: 'Matrix::NeuralNetwork::Convolutional': missing default argument for parameter 7
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,1): error C2628: 'Matrix::NeuralNetwork' followed by 'int' is illegal (did you forget a ';'?)
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,66): error C3254: 'Matrix': class contains explicit override 'get_norm_layer_outputs' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(13,66): error C2838: 'get_norm_layer_outputs': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(39,93): error C3254: 'Matrix': class contains explicit override 'handle_trainables' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\handle_trainables.h(39,93): error C2838: 'handle_trainables': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(4,52): error C3254: 'Matrix': class contains explicit override 'InputLayer' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(4,52): error C2838: 'InputLayer': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(8,78): error C3254: 'Matrix': class contains explicit override 'OutputLayer' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(8,78): error C2838: 'OutputLayer': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(13,44): error C3254: 'Matrix': class contains explicit override 'InitializeParameters' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(13,44): error C2838: 'InitializeParameters': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(23,89): error C3254: 'Matrix': class contains explicit override 'FullyConnected' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(23,89): error C2838: 'FullyConnected': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(29,203): error C3254: 'Matrix': class contains explicit override 'Convolutional' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(29,203): error C2838: 'Convolutional': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(41,137): error C3254: 'Matrix': class contains explicit override 'MaxPool' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(41,137): error C2838: 'MaxPool': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(49,137): error C3254: 'Matrix': class contains explicit override 'AvgPool' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(49,137): error C2838: 'AvgPool': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,100): error C3254: 'Matrix': class contains explicit override 'GlobAvgPool' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(57,100): error C2838: 'GlobAvgPool': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(63,199): error C3254: 'Matrix': class contains explicit override 'LocalResponseNormalization' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(63,199): error C2838: 'LocalResponseNormalization': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(82,98): error C3254: 'Matrix': class contains explicit override 'BatchNormalization' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(82,98): error C2838: 'BatchNormalization': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(4,1): error C2059: syntax error: 'namespace'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\fcl.h(4,27): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(9,1): error C2059: syntax error: 'namespace'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\cnv.h(9,15): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\lrn.h(9,1): error C2059: syntax error: 'namespace'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\lrn.h(9,15): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(11,1): error C2059: syntax error: 'namespace'
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\bnt.h(11,15): error C2334: unexpected token(s) preceding '{'; skipping apparent function body
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(4,99): error C3254: 'Matrix': class contains explicit override 'Predict' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(4,99): error C2838: 'Predict': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(10,130): error C3254: 'Matrix': class contains explicit override 'feed_forward_all_template' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(10,130): error C2838: 'feed_forward_all_template': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4,189): error C3254: 'Matrix': class contains explicit override 'Train' but does not derive from an interface that contains the function declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4,189): error C2838: 'Train': illegal qualified name in member declaration
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'Matrix::Train': missing default argument for parameter 4
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'Matrix::Train': missing default argument for parameter 5
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\train.h(4): error C2548: 'Matrix::Train': missing default argument for parameter 6
-C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(14): fatal error C1075: '{': no matching token found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(71,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(80,53): warning C4018: '>': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(84,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(162,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(168,34): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(173,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(449,42): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(450,1): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(536,55): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(545,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(551,59): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(4,1): error C2628: 'NeuralNetwork' followed by 'void' is illegal (did you forget a ';'?)
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(4,52): error C2556: 'NeuralNetwork NeuralNetwork::InputLayer(const int)': overloaded function differs only by return type from 'void NeuralNetwork::InputLayer(const int)'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(85): message : see declaration of 'NeuralNetwork::InputLayer'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(4,21): error C2371: 'NeuralNetwork::InputLayer': redefinition; different basic types
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(85): message : see declaration of 'NeuralNetwork::InputLayer'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(16,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(29,203): error C2511: 'void NeuralNetwork::Convolutional(const int,const int,const int,const int,const int,const int,const char *)': overloaded member function not found in 'NeuralNetwork'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(24): message : see declaration of 'NeuralNetwork'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(30,27): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(36,5): error C2597: illegal reference to non-static member 'NeuralNetwork::image_channels'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(36,5): error C3867: 'NeuralNetwork::image_channels': non-standard syntax; use '&' to create a pointer to member
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(37,3): error C2597: illegal reference to non-static member 'NeuralNetwork::image_channels'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(42,26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\methods.h(50,26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(5,136): error C2572: 'NeuralNetwork::feed_forward_all_template': redefinition of default argument: parameter 1
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(75): message : see declaration of 'NeuralNetwork::feed_forward_all_template'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(32,35): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(32,22): error C3861: 'inter_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(39,35): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(39,22): error C3861: 'intra_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(49,33): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(49,22): error C3861: 'convolution': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(57,29): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(57,22): error C3861: 'maxpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(62,29): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(62,22): error C3861: 'avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(67,36): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(67,22): error C3861: 'global_avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(73,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(79,36): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(79,23): error C3861: 'inter_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(86,36): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(86,23): error C3861: 'intra_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(96,34): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(96,23): error C3861: 'convolution': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(103,30): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(103,23): error C3861: 'maxpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(108,30): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(108,23): error C3861: 'avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(113,37): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(113,23): error C3861: 'global_avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(128,30): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(128,17): error C3861: 'inter_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(135,30): error C2653: 'LRN': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(135,17): error C3861: 'intra_channel': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(145,28): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(145,17): error C3861: 'convolution': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(152,24): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(152,17): error C3861: 'maxpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(157,24): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(157,17): error C3861: 'avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(162,31): error C2653: 'CNV': is not a class or namespace name
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(162,17): error C3861: 'global_avgpool': identifier not found
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\predict.h(176,105): error C2572: 'NeuralNetwork::Predict': redefinition of default argument: parameter 1
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\structure.h(105): message : see declaration of 'NeuralNetwork::Predict'
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\src\main.cpp(25,43): warning C4305: 'argument': truncation from 'double' to 'const float'
+  scratch.cpp
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(71,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(80,53): warning C4018: '>': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(84,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(162,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(168,34): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(173,31): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(449,42): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(450,1): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(536,55): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(545,39): warning C4018: '<': signed/unsigned mismatch
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(551,59): warning C4018: '<': signed/unsigned mismatch
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\xutility(3605,33): error C2675: unary '++': '_OutIt' does not define this operator or a conversion to a type acceptable to the predefined operator
+          with
+          [
+              _OutIt=std::vector<int,std::allocator<int>>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\xutility(3643): message : see reference to function template instantiation '_OutIt std::_Copy_unchecked<_InIt,_OutIt>(_InIt,_InIt,_OutIt)' being compiled
+          with
+          [
+              _OutIt=std::vector<int,std::allocator<int>>,
+              _InIt=const int *
+          ]
+C:\Users\auden\Desktop\JNCPPNET\MK2-UNN\cstmlib\matrix.h(62): message : see reference to function template instantiation '_OutIt std::copy<const _Elem*,std::vector<int,std::allocator<int>>>(_InIt,_InIt,_OutIt)' being compiled
+          with
+          [
+              _OutIt=std::vector<int,std::allocator<int>>,
+              _Elem=int,
+              _InIt=const int *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\xutility(3606,13): error C2100: illegal indirection
+  Generating Code...

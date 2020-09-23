@@ -38,6 +38,8 @@ int NeuralNetwork::get_norm_layer_outputs(const int layer_index) {
 
 void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, const int i) {
 	try {
+
+
 		if (i == -2) {
 			std::vector<int> w_s;
 			if (prev_i == -1) {
@@ -72,6 +74,8 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			weights.push_back(std::make_shared<Matrix>(w_s));
 			biases.push_back(std::make_shared<Matrix>(b_s));
 		}
+
+
 		else if (i == 0) {
 			std::vector<int> w_s;
 			if (prev_i == -1) {
@@ -107,6 +111,8 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			biases.push_back(std::make_shared<Matrix>(b_s));
 			fcl_idx += 1;
 		}
+
+
 		else if (i == 1 || i == 2) {
 			if (prev_i != 4 && prev_i != 5) {
 				Logger::Warning("Local response normalization layers are designed primarily to come after a convolutional-type layer");
@@ -157,6 +163,8 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 				lrn_intra_idx += 1;
 			}
 		}
+
+
 		else if (i == 3) {
 			std::vector<int> bnt_s;
 			if (prev_i == -1) {
@@ -187,6 +195,8 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			std::vector<float> trainables = { my_misc_utils::gen_random_float(-1, 1), my_misc_utils::gen_random_float(-1, 1) }; bnt_trainables.push_back(trainables);
 			bnt_idx += 1;
 		}
+
+
 		else if (i == 4) {
 			std::vector<int> filters_s = { conv_info_array[cnv_idx - 1][3], conv_info_array[cnv_idx - 1][5], conv_info_array[cnv_idx][2], conv_info_array[cnv_idx][2] };
 			if (prev_i == -1) {
@@ -236,15 +246,21 @@ void NeuralNetwork::handle_trainables(const int layer_index, const int prev_i, c
 			biases.push_back(std::make_shared<Matrix>(b_s));
 			cnv_idx += 1;
 		}
+
+
 		else if (i == 5) {
 			//max-pooling layers use no trainable parameters, but still need to increment the count to access layer information when iterating through other layers
 			mxp_idx += 1;
 		}
+
+
 		else if (i == 6) {
 			avgp_idx += 1;
 		}
+
+
 		else if (i == 7) {
-		globavgp_idx += 1;
+			globavgp_idx += 1;
 		}
 	}
 	catch (const std::logic_error& e) {

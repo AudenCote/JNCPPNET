@@ -150,7 +150,7 @@ public:
         }
     }
 
-    std::shared_ptr<Matrix> GetChunk(std::initializer_list<int>& init_list) {
+    std::shared_ptr<Matrix> GetChunk(std::initializer_list<int> init_list) {
 
         std::vector<int> I;
         std::copy(init_list.begin(), init_list.end(), I);
@@ -413,7 +413,7 @@ public:
             matrix_values[i] = func(matrix_values[i]);
     }
 
-    static std::shared_ptr<Matrix> DoubleMap(Matrix& m1, Matrix& m2, float (*func)(float, float)) {
+    static std::shared_ptr<Matrix> DoubleMap(const Matrix& m1, const Matrix& m2, float (*func)(float, float)) {
         try {
             if (m1.num_vals != m2.num_vals) {
                 throw(std::invalid_argument("Matrix shapes do not match -- Exception thrown in function Matrix::DoubleMap()"));
