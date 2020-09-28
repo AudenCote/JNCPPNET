@@ -75,8 +75,8 @@ private:
 	std::vector<std::shared_ptr<Matrix>> feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs = true);
 
 public:
-	NeuralNetwork(const int in_nodes, const int out_nodes, const float rate)
-		: input_nodes(in_nodes), output_nodes(out_nodes), learning_rate(rate) {
+	NeuralNetwork(const float rate)
+		: learning_rate(rate) {
 		Logger::Info("Neural Network Object Created");
 	}
 
@@ -104,9 +104,9 @@ public:
 
 	std::shared_ptr<Matrix> Predict(const Matrix& input_array, const bool vectorize_inputs = true);
 
-	void Train(Matrix& training_data, Matrix& target_data, const char* gradient_descent_type, int epochs, int batch_size, float learning_rate, bool print);
+	void Train(Matrix& training_data, Matrix& target_data, int epochs, int batch_size, float learning_rate, const char* gradient_descent_type, bool print);
 
-}
+};
 
 
 #endif

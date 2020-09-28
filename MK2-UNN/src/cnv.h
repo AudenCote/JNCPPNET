@@ -62,7 +62,8 @@ namespace CNV {
 							}
 						}
 
-						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(filt.GetChunk[f], *image_section);
+						std::shared_ptr<Matrix> filt_chunk = filt.GetChunk({ f });
+						std::shared_ptr<Matrix> kernel_times_image_section = Matrix::ElementwiseMultiplication(*filt_chunk, *image_section);
 						float summed = kernel_times_image_section->Sum();
 						output_matrix->SetVal({ f, out_y, out_x }, summed + bias.GetVal({ f, 0 }));
 						curr_x = curr_x + stride;
@@ -221,7 +222,8 @@ namespace CNV {
 		std::vector<int> ds_shape = { channels, 1, 1 }; std::shared_ptr<Matrix> downsampled = std::make_shared<Matrix>(ds_shape);
 
 		for (int chan = 0; chan < image.shape[0]; chan++) {
-			float channel_average = Matrix::Average(image.GetChunk({ chan }));
+			std::shared_ptr<Matrix> chan_chunk = image.GetChunk({ chan });
+			float channel_average = Matrix::Average(*chan_chunk);
 
 			downsampled->SetVal({ chan, 0, 0 }, channel_average);
 		}
@@ -281,8 +283,9 @@ namespace CNV {
 		std::shared_ptr<Matrix> dout = std::make_shared<Matrix>(conv_in.shape);
 
 		for (int chan = 0; chan < dout->shape[0]; chan++) {
-			float channel_average = Matrix::Average(dout->GetChunk(my_misc_utils::make_useful({ my_misc_utils::make_useful({ chan }) })));
-			std::vector<int> dout_channel_shape = {dout[1], dout[2]};
+			std::shared_ptr<Matrix> chan_chunk = dout->GetChunk({ chan });
+			float channel_average = Matrix::Average(*chan_chunk);
+			std::vector<int> dout_channel_shape = {dout->shape[1], dout->shape[2]};
 			std::shared_ptr<Matrix> averaged_channel = std::make_shared<Matrix>(dout_channel_shape);
 			for (int v = 0; v < averaged_channel->num_vals; v++) {
 				averaged_channel->matrix_values[v] = channel_average;

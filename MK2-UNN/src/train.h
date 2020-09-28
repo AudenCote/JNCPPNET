@@ -105,7 +105,7 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 																												 learning_rate, fully_connected_activations[fc_activation_idx]);
 
 						fcl_sample_weights_deltas.push_back(delt_grad_vec[0]); fcl_sample_bias_deltas.push_back(delt_grad_vec[1]);
-						int gradients_vector_length = delt_grad_vec[1][0] * delt_grad_vec[1][1];
+						int gradients_vector_length = delt_grad_vec[1]->shape[0] * delt_grad_vec[1]->shape[1];
 						last_gradients = Matrix::Reshape(*delt_grad_vec[1], {1, gradients_vector_length}); //Turning gradients into vector to be passed back 
 						
 						weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
@@ -123,7 +123,7 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 						std::vector<std::shared_ptr<Matrix>> conv_grads_vec = CNV::convolution_backprop(*last_gradients, *hiddens[hiddens_idx - 1], *weights[weights_backprop_idx], conv_info_array[cnv_info_backprop_idx][4]); //returns { dout, dfilt, dbias }
 
 						cnv_sample_filt_deltas.push_back(conv_grads_vec[1]); cnv_sample_bias_deltas.push_back(conv_grads_vec[2]);
-						int gradients_vector_length = conv_grads_vec[0][0] * conv_grads_vec[0][1] * conv_grads_vec[0][2];
+						int gradients_vector_length = conv_grads_vec[0]->shape[0] * conv_grads_vec[0]->shape[1] * conv_grads_vec[0]->shape[2];
 						last_gradients = Matrix::Reshape(*conv_grads_vec[0], { 1, gradients_vector_length }); //Turning gradients into vector to be passed back 
 						
 						weights_backprop_idx -= 1; cnv_info_backprop_idx -= 1; hiddens_idx -= 1;
@@ -131,7 +131,7 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 					else if (inner_layers[l] == 5) {
 						std::shared_ptr<Matrix> dpool = CNV::maxpool_backprop(*last_gradients, *hiddens[hiddens_idx - 1], maxpool_info_array[mxp_info_backprop_idx][0], maxpool_info_array[mxp_info_backprop_idx][1]); //Returns only dout, not a vector like some of the other layers (e.g. conv, fc)
 						
-						int gradients_vector_length = dpool[0] * dpool[1] * dpool[2];
+						int gradients_vector_length = dpool->shape[0] * dpool->shape[1] * dpool->shape[2];
 						last_gradients = Matrix::Reshape(*dpool, { 1, gradients_vector_length});//Turning gradients into vector to be passed back 
 
 						mxp_info_backprop_idx -= 1; hiddens_idx -= 1;
@@ -150,7 +150,7 @@ void NeuralNetwork::Train(Matrix& training_data, Matrix& target_data, int epochs
 					std::vector<std::shared_ptr<Matrix>> delt_grad_vec = fully_connected::backprop(last_gradients, weights[weights_backprop_idx],
 						hiddens[hiddens_idx], hiddens[hiddens_idx - 1],
 						learning_rate, fully_connected_activations[fc_activation_idx]);
-					sample_weights_deltas.push_back(delt_grad_vec[0]); sample_bias_deltas.push_back(delt_grad_vec[1]);
+					fcl_sample_weights_deltas.push_back(delt_grad_vec[0]); fcl_sample_bias_deltas.push_back(delt_grad_vec[1]);
 					weights_backprop_idx -= 1; fc_activation_idx -= 1; hiddens_idx -= 1;
 				}
 				else if (inner_layers[0] == 1) {

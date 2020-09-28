@@ -22,7 +22,7 @@ int main() {
 	std::vector<int> input_matrix_shape = {8, 1};
 	Matrix input_matrix = Matrix(input_matrix_shape);
 
-	NeuralNetwork NN = NeuralNetwork(8, 4, .1);
+	NeuralNetwork NN = NeuralNetwork(.1);
 
 	NN.InputLayer(8);
 	NN.FullyConnected(16, "sigmoid");

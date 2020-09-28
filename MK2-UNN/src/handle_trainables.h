@@ -10,6 +10,7 @@
 //convolutional layer -> 4
 //max-pooling layer -> 5
 
+
 int NeuralNetwork::get_norm_layer_outputs(const int layer_index) {
 	int last_relevant = -5;
 	//might have to start at layer_index - 1? doing this convolutedly so that it can be error-checked, can be reworked

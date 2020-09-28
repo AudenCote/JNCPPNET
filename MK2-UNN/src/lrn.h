@@ -41,7 +41,7 @@ namespace LRN {
 						}
 
 						normalized = normalized / pow((float)(epsilon + alpha * outer_sum), float(beta));
-						output_matrix->Set({ chan, x, y }, normalized);
+						output_matrix->SetVal({ chan, x, y }, normalized);
 					}
 				}
 			}

@@ -2,7 +2,7 @@
 #define PREDICT_INCLUDE
 
 
-std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs = true) {
+std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(const Matrix& input_array, const bool vectorize_inputs) {
 
 	std::vector<int> inp_shape;
 	if (vectorize_inputs) {
@@ -94,7 +94,7 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(co
 		}
 		else if (inner_layers[0] == 4) {
 			last_hidden = CNV::convolution(*hiddens[hiddens.size() - 1], conv_info_array[cnv_predict_idx][5], conv_info_array[cnv_predict_idx][0], conv_info_array[cnv_predict_idx][1],
-				*weights[l + 1], *biases[l + 1], conv_info_array[cnv_predict_idx][4], conv_info_array[cnv_predict_idx][2]);
+				*weights[l + 1], *biases[l + 1], conv_info_array[cnv_predict_idx][4], conv_info_array[cnv_predict_idx][2], conv_activations[cnv_predict_idx]);
 			Matrix::Reshape(*last_hidden, { conv_info_array[cnv_predict_idx][5] * ((int)((hiddens[hiddens.size() - 1]->shape[1] - conv_info_array[cnv_predict_idx][2]) / conv_info_array[cnv_predict_idx][4]) + 1) *
 			((int)((hiddens[hiddens.size() - 1]->shape[1] - conv_info_array[cnv_predict_idx][2]) / conv_info_array[cnv_predict_idx][4]) + 1), 1 });
 			cnv_predict_idx++;
@@ -173,7 +173,7 @@ std::vector<std::shared_ptr<Matrix>> NeuralNetwork::feed_forward_all_template(co
 }
 
 
-std::shared_ptr<Matrix> NeuralNetwork::Predict(const Matrix& input_array, const bool vectorize_inputs = true) {
+std::shared_ptr<Matrix> NeuralNetwork::Predict(const Matrix& input_array, const bool vectorize_inputs) {
 	std::vector<std::shared_ptr<Matrix>> feed_forward_return_vector = feed_forward_all_template(input_array, vectorize_inputs);
 	return feed_forward_return_vector[0];
 }
